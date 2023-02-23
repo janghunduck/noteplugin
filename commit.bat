@@ -16,6 +16,6 @@ git config --list
 echo  ==================== git cconfig ==========================
 git remote add origin https://github.com/janghunduck/noteplugin.git
 rem git pull origin main
-git push origin main
+git push origin master
 
 pause
