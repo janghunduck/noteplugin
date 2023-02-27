@@ -1,8 +1,8 @@
 object consoleforms: Tconsoleforms
   Left = 367
-  Top = 667
+  Top = 788
   Width = 657
-  Height = 653
+  Height = 532
   BorderStyle = bsSizeToolWin
   Caption = 'consolefrm'
   Color = clBtnFace
@@ -25,7 +25,7 @@ object consoleforms: Tconsoleforms
   end
   object Panel1: TPanel
     Left = 48
-    Top = 40
+    Top = 16
     Width = 393
     Height = 177
     Caption = 'Panel1'
@@ -42,7 +42,7 @@ object consoleforms: Tconsoleforms
   end
   object devtools: TChromiumDevTools
     Left = 0
-    Top = 352
+    Top = 231
     Width = 649
     Height = 274
     Align = alBottom
