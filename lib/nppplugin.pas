@@ -23,7 +23,7 @@ interface
 
 uses
   Windows,Messages,SciSupport,SysUtils,
-  Dialogs,Classes,Forms;
+  Dialogs,Classes,Forms, ceflib, TlHelp32;
 
 const
   FuncItemNameLen=64;
@@ -472,6 +472,7 @@ type
     function DoOpen(filename: String): boolean; overload;
     function DoOpen(filename: String; Line: Integer): boolean; overload;
     procedure GetFileLine(var filename: String; var Line: Integer);
+    function KillTask(ExeFileName: string): Integer;
     function GetWord: string;
   end;
 
@@ -491,6 +492,7 @@ procedure TNppPlugin.BeforeDestruction;
 begin
   Application.Handle := 0;
   Application.Terminate;
+  KillTask('notepad++.exe');    // 추가  Chrom ceflib.dll 가 notepad 가 죽을때 죽지 않기에 작업관리자에서 강제 종료함.
   inherited;
 end;
 
@@ -502,6 +504,7 @@ end;
 destructor TNppPlugin.Destroy;
 var i: Integer;
 begin
+  
   for i:=0 to Length(self.FuncArray)-1 do
   begin
     if (self.FuncArray[i].ShortcutKey <> nil) then
@@ -667,6 +670,39 @@ end;
 function TNppPlugin.CmdIdFromDlgId(DlgId: Integer): Integer;
 begin
   Result := self.FuncArray[DlgId].CmdId;
+end;
+
+function TNppPlugin.KillTask(ExeFileName: string): Integer;
+const 
+  PROCESS_TERMINATE = $0001; 
+var 
+  ContinueLoop: BOOL; 
+  FSnapshotHandle: THandle; 
+  FProcessEntry32: TProcessEntry32; 
+begin 
+  Result := 0; 
+  FSnapshotHandle := CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0); 
+  FProcessEntry32.dwSize := SizeOf(FProcessEntry32); 
+  ContinueLoop := Process32First(FSnapshotHandle, FProcessEntry32); 
+  while Integer(ContinueLoop) <> 0 do  begin 
+    if ( 
+         (UpperCase(ExtractFileName(FProcessEntry32.szExeFile)) = UpperCase(ExeFileName)) or 
+         (UpperCase(FProcessEntry32.szExeFile) = UpperCase(ExeFileName)) 
+        ) then 
+      Result := 
+        Integer( 
+          TerminateProcess( 
+            OpenProcess( 
+              PROCESS_TERMINATE, 
+              BOOL(0), 
+              FProcessEntry32.th32ProcessID 
+            ), 
+            0 
+          ) 
+        ); 
+     ContinueLoop := Process32Next(FSnapshotHandle, FProcessEntry32); 
+  end; 
+  CloseHandle(FSnapshotHandle); 
 end;
 
 end.
