@@ -24,8 +24,8 @@ object consoleforms: Tconsoleforms
     TabOrder = 0
   end
   object Panel1: TPanel
-    Left = 48
-    Top = 16
+    Left = 8
+    Top = 32
     Width = 393
     Height = 177
     Caption = 'Panel1'
