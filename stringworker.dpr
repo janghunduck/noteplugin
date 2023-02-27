@@ -10,7 +10,6 @@ library stringworker;
   with your DLL. To avoid using BORLNDMM.DLL, pass string information
   using PChar or ShortString parameters. }
 
-{$R 'helloworldres.res' 'helloworldres.rc'}
 
 uses
   SysUtils,
@@ -24,8 +23,10 @@ uses
   NppDockingForms in 'lib\NppDockingForms.pas' {NppDockingForm},
   stringworkerplugin in 'stringworkerplugin.pas',
   AboutForms in 'AboutForms.pas' {AboutForm},
-  helloworlddockingforms in 'helloworlddockingforms.pas' {HelloWorldDockingForm},
-  KeFreeUtil in 'KefreeUtil.pas';
+  jsconsoleforms in 'jsconsoleforms.pas' {jsconsoledlg},
+  KeFreeUtil in 'KefreeUtil.pas',
+  consolefrm in 'consolefrm.pas' {consoleforms},
+  cefconsole in 'cefconsole.pas';
 
 {$R *.res}
 
