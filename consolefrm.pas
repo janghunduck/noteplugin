@@ -11,11 +11,12 @@ type
     devtools: TChromiumDevTools;
     Button3: TButton;
     Button4: TButton;
-    runbtn: TButton;
-    slectedrunbtn: TButton;
     Panel1: TPanel;
     targetedt: TEdit;
+    Panel2: TPanel;
     runtextbtn: TButton;
+    runbtn: TButton;
+    slectedrunbtn: TButton;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure Button3Click(Sender: TObject);
     procedure Button4Click(Sender: TObject);

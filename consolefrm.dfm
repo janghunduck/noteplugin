@@ -4,7 +4,7 @@ object consoleforms: Tconsoleforms
   Width = 657
   Height = 495
   BorderStyle = bsSizeToolWin
-  Caption = 'consolefrm'
+  Caption = 'chrom for javascript '
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -21,8 +21,8 @@ object consoleforms: Tconsoleforms
     Left = 0
     Top = 41
     Width = 649
-    Height = 337
-    Align = alTop
+    Height = 383
+    Align = alClient
   end
   object Button3: TButton
     Left = 448
@@ -44,26 +44,6 @@ object consoleforms: Tconsoleforms
     Visible = False
     OnClick = Button4Click
   end
-  object runbtn: TButton
-    Left = 114
-    Top = 400
-    Width = 87
-    Height = 25
-    Hint = 'file load run'
-    Caption = 'current file run'
-    TabOrder = 3
-    OnClick = runbtnClick
-  end
-  object slectedrunbtn: TButton
-    Left = 210
-    Top = 400
-    Width = 103
-    Height = 25
-    Hint = 'selected text run'
-    Caption = 'selected range run'
-    TabOrder = 4
-    OnClick = slectedrunbtnClick
-  end
   object Panel1: TPanel
     Left = 0
     Top = 0
@@ -71,7 +51,7 @@ object consoleforms: Tconsoleforms
     Height = 41
     Align = alTop
     Caption = 'Panel1'
-    TabOrder = 5
+    TabOrder = 3
     object targetedt: TEdit
       Left = 24
       Top = 8
@@ -82,14 +62,43 @@ object consoleforms: Tconsoleforms
       Text = 'file:///D:\flowjs\backend\flowjs.html'
     end
   end
-  object runtextbtn: TButton
-    Left = 16
-    Top = 401
-    Width = 89
-    Height = 25
-    Hint = 'all script'
-    Caption = 'all script'
-    TabOrder = 6
-    OnClick = runtextbtnClick
+  object Panel2: TPanel
+    Left = 0
+    Top = 424
+    Width = 649
+    Height = 44
+    Align = alBottom
+    BevelOuter = bvNone
+    TabOrder = 4
+    object runtextbtn: TButton
+      Left = 16
+      Top = 10
+      Width = 89
+      Height = 25
+      Hint = 'all script'
+      Caption = 'all script'
+      TabOrder = 0
+      OnClick = runtextbtnClick
+    end
+    object runbtn: TButton
+      Left = 114
+      Top = 10
+      Width = 87
+      Height = 25
+      Hint = 'file load run'
+      Caption = 'current file run'
+      TabOrder = 1
+      OnClick = runbtnClick
+    end
+    object slectedrunbtn: TButton
+      Left = 210
+      Top = 10
+      Width = 103
+      Height = 25
+      Hint = 'selected text run'
+      Caption = 'selected range run'
+      TabOrder = 2
+      OnClick = slectedrunbtnClick
+    end
   end
 end
