@@ -12,9 +12,9 @@ or
 1. using stringworker.0.1_x86.zip 
 
 
-![ex_screenshot](./img/screen.png)
+![ex_screenshot](./img/screen.png) <br/>
 
-
+![ex_screenshot](./img/screen2.png)
 
 
 ## . next code cef3 javascript function return test code <br/>
