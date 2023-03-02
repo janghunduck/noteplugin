@@ -9,11 +9,14 @@ uses
 type
   Tconsoleforms = class(TNppForm)
     Button1: TButton;
-    Panel1: TPanel;
     Button2: TButton;
     devtools: TChromiumDevTools;
+    Button3: TButton;
+    Memo1: TMemo;
     procedure Button2Click(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure Button1Click(Sender: TObject);
+    procedure Button3Click(Sender: TObject);
   private
     { Private declarations }
   protected
@@ -23,11 +26,13 @@ type
     function WantChildKey(Child: TControl; var Message: TMessage): Boolean; override;
   public
     chrom: TChromium;
+    currentfile: string;
     NpHandle : THandle;
     Npp: TNppPlugin;
     DefaultCloseAction: TCloseAction;
     procedure CreateWindowHandle(const Params: TCreateParams); override;
     destructor Destroy; override;
+
   end;
 
 var
@@ -41,15 +46,28 @@ implementation
 procedure Tconsoleforms.Button2Click(Sender: TObject);
 begin
   chrom:= TChromium.Create(nil);
-  chrom.Parent := panel1;
+  chrom.Parent := self;
   chrom.Align := alClient;
   chrom.DefaultUrl := 'about:blank';
   chrom.hide;
-  chrom.Load('file:///D:\flowjs\backend\test\test.html');
-
+  chrom.Load('file:///D:\flowjs\backend\flowjs.html');
 
   devtools.ShowDevTools(chrom.Browser);
 end;
+
+
+procedure Tconsoleforms.Button3Click(Sender: TObject);
+var
+ i: integer;
+ browser : icefbrowser;
+begin
+  for i:=0 to devtools.ControlCount-1 do
+  begin
+    memo1.Lines.Add(devtools.Controls[i].GetNamePath);
+  end;
+
+end;
+
 
 procedure Tconsoleforms.CreateWindowHandle(const Params: TCreateParams);
 begin
@@ -100,7 +118,6 @@ begin
   FreeAndnil(chrom);
   FreeAndnil(devtools);
   CefShutDown;
-  
   inherited;
 
 end;
@@ -109,6 +126,12 @@ function Tconsoleforms.WantChildKey(Child: TControl;
   var Message: TMessage): Boolean;
 begin
   Result := Child.Perform(CN_BASE + Message.Msg, Message.WParam, Message.LParam) <> 0;
+end;
+
+procedure Tconsoleforms.Button1Click(Sender: TObject);
+begin
+  inherited;
+  showmessage(CefLibrary);
 end;
 
 end.

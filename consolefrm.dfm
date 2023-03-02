@@ -22,14 +22,7 @@ object consoleforms: Tconsoleforms
     Height = 25
     Caption = 'Button1'
     TabOrder = 0
-  end
-  object Panel1: TPanel
-    Left = 8
-    Top = 32
-    Width = 393
-    Height = 177
-    Caption = 'Panel1'
-    TabOrder = 1
+    OnClick = Button1Click
   end
   object Button2: TButton
     Left = 528
@@ -37,7 +30,7 @@ object consoleforms: Tconsoleforms
     Width = 75
     Height = 25
     Caption = 'Button2'
-    TabOrder = 2
+    TabOrder = 1
     OnClick = Button2Click
   end
   object devtools: TChromiumDevTools
@@ -46,5 +39,22 @@ object consoleforms: Tconsoleforms
     Width = 649
     Height = 274
     Align = alBottom
+  end
+  object Button3: TButton
+    Left = 528
+    Top = 112
+    Width = 75
+    Height = 25
+    Caption = 'Button3'
+    TabOrder = 3
+    OnClick = Button3Click
+  end
+  object Memo1: TMemo
+    Left = 16
+    Top = 16
+    Width = 273
+    Height = 169
+    ImeName = 'Microsoft Office IME 2007'
+    TabOrder = 4
   end
 end

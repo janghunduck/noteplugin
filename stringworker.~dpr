@@ -10,7 +10,6 @@ library stringworker;
   with your DLL. To avoid using BORLNDMM.DLL, pass string information
   using PChar or ShortString parameters. }
 
-{$R 'helloworldres.res' 'helloworldres.rc'}
 
 uses
   SysUtils,
@@ -27,7 +26,8 @@ uses
   jsconsoleforms in 'jsconsoleforms.pas' {jsconsoledlg},
   KeFreeUtil in 'KefreeUtil.pas',
   consolefrm in 'consolefrm.pas' {consoleforms},
-  cefconsole in 'cefconsole.pas';
+  cefconsole in 'cefconsole.pas',
+  jasminenpp in 'jasminenpp.pas';
 
 {$R *.res}
 

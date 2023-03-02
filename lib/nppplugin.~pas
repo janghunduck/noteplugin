@@ -448,6 +448,7 @@ type
     PluginName: nppString;
     function GetPluginsConfigDir: string;
     function AddFuncItem(Name: nppString; Func: PFUNCPLUGINCMD): Integer; overload;
+    function AddOnFuncItem(Name: nppString; Func: PFUNCPLUGINCMD): Integer; overload;
     function AddFuncItem(Name: nppString; Func: PFUNCPLUGINCMD; ShortcutKey: TShortcutKey): Integer; overload;
   public
     NppData: TNppData;
@@ -635,6 +636,7 @@ var
   s: string;
 begin
   // ask if we are not already opened
+  
   SetLength(s, 500);
   r := SendMessage(self.NppData.NppHandle, NPPM_GETFULLCURRENTPATH, 0, LPARAM(PChar(s)));
   SetString(s, PChar(s), strlen(PChar(s)));

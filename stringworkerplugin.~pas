@@ -446,7 +446,7 @@ begin
   p^.Mask := DWS_DF_CONT_BOTTOM; // | NppTbMsg.DWS_ICONTAB | NppTbMsg.DWS_ICONBAR;
 
   //SendMessage(getCurScintilla(), NPPM_DMMREGASDCKDLG, 0, LPARAM(P));
-  SendMessage(getCurScintilla(), NPPM_DMMSHOW, 0, LPARAM(consoleforms.handle));
+  SendMessage(getCurScintilla(), NPPM_DMMSHOW, 0, LPARAM(consoleforms));
 
 end;
 

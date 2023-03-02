@@ -635,6 +635,7 @@ var
   s: string;
 begin
   // ask if we are not already opened
+  
   SetLength(s, 500);
   r := SendMessage(self.NppData.NppHandle, NPPM_GETFULLCURRENTPATH, 0, LPARAM(PChar(s)));
   SetString(s, PChar(s), strlen(PChar(s)));
