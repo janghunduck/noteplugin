@@ -1,4 +1,4 @@
-# noteplugin
+# notepad++ plugin(npp)
 
 Notepad++ Plugin  stringworker
 
