@@ -1,4 +1,4 @@
-# notepad++ plugin(npp stringworker)
+# notepad++ plugin(npp stringworker for only x86(win32))
 
 Notepad++ Plugin  stringworker
 
