@@ -1,8 +1,8 @@
 object consoleforms: Tconsoleforms
-  Left = 367
-  Top = 788
+  Left = 1314
+  Top = 631
   Width = 657
-  Height = 532
+  Height = 495
   BorderStyle = bsSizeToolWin
   Caption = 'consolefrm'
   Color = clBtnFace
@@ -13,48 +13,83 @@ object consoleforms: Tconsoleforms
   Font.Style = []
   OldCreateOrder = False
   OnClose = FormClose
+  OnCreate = FormCreate
+  OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
-  object Button1: TButton
-    Left = 528
-    Top = 40
-    Width = 75
-    Height = 25
-    Caption = 'Button1'
-    TabOrder = 0
-    OnClick = Button1Click
-  end
-  object Button2: TButton
-    Left = 528
-    Top = 72
-    Width = 75
-    Height = 25
-    Caption = 'Button2'
-    TabOrder = 1
-    OnClick = Button2Click
-  end
   object devtools: TChromiumDevTools
     Left = 0
-    Top = 231
+    Top = 41
     Width = 649
-    Height = 274
-    Align = alBottom
+    Height = 337
+    Align = alTop
   end
   object Button3: TButton
-    Left = 528
-    Top = 112
+    Left = 448
+    Top = 368
     Width = 75
     Height = 25
     Caption = 'Button3'
-    TabOrder = 3
+    TabOrder = 1
+    Visible = False
     OnClick = Button3Click
   end
-  object Memo1: TMemo
-    Left = 16
-    Top = 16
-    Width = 273
-    Height = 169
-    ImeName = 'Microsoft Office IME 2007'
+  object Button4: TButton
+    Left = 536
+    Top = 368
+    Width = 75
+    Height = 25
+    Caption = 'dev test'
+    TabOrder = 2
+    Visible = False
+    OnClick = Button4Click
+  end
+  object runbtn: TButton
+    Left = 114
+    Top = 400
+    Width = 87
+    Height = 25
+    Hint = 'file load run'
+    Caption = 'current file run'
+    TabOrder = 3
+    OnClick = runbtnClick
+  end
+  object slectedrunbtn: TButton
+    Left = 210
+    Top = 400
+    Width = 103
+    Height = 25
+    Hint = 'selected text run'
+    Caption = 'selected range run'
     TabOrder = 4
+    OnClick = slectedrunbtnClick
+  end
+  object Panel1: TPanel
+    Left = 0
+    Top = 0
+    Width = 649
+    Height = 41
+    Align = alTop
+    Caption = 'Panel1'
+    TabOrder = 5
+    object targetedt: TEdit
+      Left = 24
+      Top = 8
+      Width = 617
+      Height = 21
+      ImeName = 'Microsoft Office IME 2007'
+      TabOrder = 0
+      Text = 'file:///D:\flowjs\backend\flowjs.html'
+    end
+  end
+  object runtextbtn: TButton
+    Left = 16
+    Top = 401
+    Width = 89
+    Height = 25
+    Hint = 'all script'
+    Caption = 'all script'
+    TabOrder = 6
+    OnClick = runtextbtnClick
   end
 end

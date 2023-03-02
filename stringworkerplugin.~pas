@@ -12,13 +12,14 @@ uses
   Windows,
   messages,
   NppPlugin, SciSupport, AboutForms, jsconsoleforms,
-  kefreeutil, consolefrm,
+
   ceflib,
   ceffilescheme;
 
 type
   THelloWorldPlugin = class(TNppPlugin)
-  private
+  public
+    aaa : string;
     function sendScintilla(hCurrScintilla: THandle; msg: LongWord; wParam:integer; lParam:integer): integer; overload;
     function sendScintilla(hCurrScintilla: THandle; msg: LongWord): integer; overload;
     function sendScintilla(hCurrScintilla: THandle; msg: LongWord; wParam:integer):Integer; overload;
@@ -27,14 +28,16 @@ type
     function getCurScintilla(): Thandle;
     function getSelectedText(): string;
     function getAllText(): string;
+    function getAllTextA(): string;
     function getLineCount(): integer;
     function getLineLength(linenumber: integer): integer;
     function getCurrentFile(): string;
-    function getCurrentPathFile(): string;
+    function getCurrentPathFile(): AnsiString;
+    function getCurrentPathFileA(): PWChar;
+    procedure getCurrentPathFilep(returnstr: pwidechar);
     function setToolbardata():string;
-    
-  public
     constructor Create;
+    // -------------------------------------------------------------------
     procedure FuncHelloWorld;
     procedure FuncHelloWorldDocking;
     procedure FuncAbout;
@@ -49,6 +52,8 @@ type
     procedure JsConsoleDock;
     procedure JsConsole;
     procedure JsWinConsole;
+
+
   end;
 
 procedure _FuncHelloWorld; cdecl;
@@ -64,6 +69,7 @@ procedure _FuncTest; cdecl;
 procedure _JsConsoleDock; cdecl;
 procedure _JsConsole; cdecl;
 procedure _JsWinConsole; cdecl;
+procedure _getCurrentPathFile; cdecl;
 
 procedure RegisterSchemes(const registrar: ICefSchemeRegistrar); stdcall;
 function CefWndProc(Wnd: HWND; message: UINT; wParam: Integer; lParam: Integer): Integer; stdcall;
@@ -76,7 +82,7 @@ var
 
 implementation
 
-uses cefconsole;
+uses cefconsole, kefreeutil, consolefrm;
 { THelloWorldPlugin }
 
 
@@ -144,9 +150,9 @@ begin
 
   self.AddFuncItem('-', _FuncHelloWorld);
    }
-  self.AddFuncItem('js object 持失', _JsConsole);
-  self.AddFuncItem('js winapi 持失', _JsWinConsole);
-  self.AddFuncItem('js object dock ', _JsConsoleDock);
+  self.AddFuncItem('Chrom Developer Tools', _JsConsole);
+  //self.AddFuncItem('js winapi 持失', _JsWinConsole);
+  //self.AddFuncItem('js object dock ', _JsConsoleDock);
   self.AddFuncItem('- ', nil);
   self.AddFuncItem('DoubleQuot to Quot', _FuncDoubleQuotToSingle);
   self.AddFuncItem('DoubleQuot plus CR string', _FuncConbineQQPlusCR);
@@ -175,14 +181,20 @@ end;
 function THelloWorldPlugin.getSelectedText(): string;
 var
   hCurrScintilla: THandle;
-  bufLength: integer;
-
+  length: integer;
+  buf : string;
 begin
+  buf := #0;
   hCurrScintilla := getCurScintilla();
-  bufLength := sendScintilla(hCurrScintilla, SCI_GETSELTEXT);
-  setlength(result, bufLength);
-  sendScintilla(hCurrScintilla, SCI_GETSELTEXT, 0, LPARAM(PChar(result)));
-  //if result = nil then result := '';
+  length := sendScintilla(hCurrScintilla, SCI_GETSELTEXT);
+  if length = 0 then
+  begin
+    result := buf;
+    exit;
+  end;
+  setlength(buf, length);
+  sendScintilla(hCurrScintilla, SCI_GETSELTEXT, 0, LPARAM(PChar(buf)));
+  result := PChar(buf);
 end;
 
 
@@ -190,7 +202,6 @@ function THelloWorldPlugin.getAllText(): string;
 var
   hCurrScintilla: THandle;
   bufLength: integer;
-
 begin
   hCurrScintilla := getCurScintilla();
   bufLength := sendScintilla(hCurrScintilla, SCI_GETTEXT);
@@ -218,6 +229,8 @@ var
   selectedText: string;
   selStart,selEnd:integer;
 begin
+  showmessage('filename = [' + self.getCurrentPathFile  + ']');
+  showmessage('all text = [' + self.getAllTextA  + ']');
   showmessage('filename = [' + getCurrentFile  + ']');
   showmessage('selected text = [' + getSelectedText() + ']');
   showmessage('line count= [' + inttostr(getLineCount()) + ']');
@@ -233,8 +246,10 @@ begin
 	sendScintilla(hCurrScintilla, SCI_REPLACETARGET, bufLength, (LPARAM)reversedText);
 	sendScintilla(hCurrScintilla, SCI_SETSEL, selStart, selStart + bufLength);
   }
+  //sendScintilla(hCurrScintilla, SCI_SETSEL, 0, 48);
   //s := 'Hello World';
   //SendMessage(self.NppData.ScintillaMainHandle, SCI_REPLACESEL, 0, LPARAM(PChar(s)));
+  //showmessage(s);
 end;
 
 procedure THelloWorldPlugin.FuncAbout;
@@ -259,6 +274,12 @@ begin
   tb.ToolbarIcon := 0;
   tb.ToolbarBmp := LoadImage(Hinstance, 'IDB_TB_TEST', IMAGE_BITMAP, 0, 0, (LR_DEFAULTSIZE or LR_LOADMAP3DCOLORS));
   SendMessage(self.NppData.NppHandle, NPPM_ADDTOOLBARICON, WPARAM(self.CmdIdFromDlgId(1)), LPARAM(@tb));
+
+{
+  tb.ToolbarIcon := 0;
+  tb.ToolbarBmp := LoadImage(Hinstance, 'QRBITMAP', IMAGE_BITMAP, 0, 0, (LR_DEFAULTSIZE));
+  Npp_Send(NPPM_ADDTOOLBARICON, WPARAM(self.CmdIdFromDlgId(0)), LPARAM(@tb));
+  }
 end;
 
 
@@ -295,6 +316,18 @@ begin
   SetLength(buf, 0);
 end;
    }
+
+function THelloWorldPlugin.getAllTextA(): string;
+var
+  length: integer;
+  buf: String;
+begin
+  length := SendMessage(Npp.NppData.ScintillaMainHandle, SCI_GETTEXTLENGTH, 0, 0);
+  SetLength(buf, length);
+  SendMessage(Npp.NppData.ScintillaMainHandle, SCI_GETTEXT, length, LPARAM(PChar(buf)));
+  result := PChar(buf);
+end;
+
 
 procedure THelloWorldPlugin.FuncConbineQQPlusCR;
 var
@@ -361,13 +394,42 @@ begin
   result := string(pfilename);
 end;
 
-function THelloWorldPlugin.getCurrentPathFile: string;
+function THelloWorldPlugin.getCurrentPathFile: AnsiString;
 var
   pcurrentpath: PWideChar;
+  //pcurrentpath: PAnsiChar;
   ret: integer;
 begin
-  ret := SendMessage(self.NppData.NppHandle, NPPM_GETFULLCURRENTPATH, MAX_PATH, LPARAM(pcurrentpath));
-  result := string(pcurrentpath);
+
+  ret := SendMessage(NppData.NppHandle, NPPM_GETFULLCURRENTPATH, 0, LPARAM(pcurrentpath));
+  aaa := string(pcurrentpath);
+
+  //showmessage(aaa);
+  result := AnsiString(pcurrentpath);
+end;
+
+
+function THelloWorldPlugin.getCurrentPathFileA: PWChar;
+var
+  s: String;
+  r: Integer;
+begin
+  s := '';
+  SetLength(s, 300);
+  SendMessage(self.NppData.NppHandle, NPPM_GETFULLCURRENTPATH,0, LPARAM(PWChar(s)));
+  result := PWChar(s);
+end;
+
+
+procedure THelloWorldPlugin.getCurrentPathFilep(returnstr: pwidechar);
+begin
+  SendMessage(NppData.NppHandle, NPPM_GETFULLCURRENTPATH, MAX_PATH, LPARAM(returnstr));
+  
+end;
+
+procedure _getCurrentPathFile; cdecl;
+begin
+  Npp.getCurrentPathFile;
 end;
 
 
@@ -422,6 +484,8 @@ begin
   if (not Assigned(consoleforms)) then
       consoleforms := Tconsoleforms.Create(self);
   consoleforms.currentfile := getCurrentFile;
+  consoleforms.currentpathfile := getCurrentPathFile;
+  //Showmessage(getCurrentFile);
   {
   GetWindowRect
   p.X := 0;
@@ -429,7 +493,7 @@ begin
   }
 
   consoleforms.Show;
-  setToolbardata();
+  //setToolbardata();
 end;
 
   {
@@ -446,7 +510,7 @@ begin
   p^.Mask := DWS_DF_CONT_BOTTOM; // | NppTbMsg.DWS_ICONTAB | NppTbMsg.DWS_ICONBAR;
 
   //SendMessage(getCurScintilla(), NPPM_DMMREGASDCKDLG, 0, LPARAM(P));
-  SendMessage(getCurScintilla(), NPPM_DMMSHOW, 0, LPARAM(consoleforms));
+  SendMessage(getCurScintilla(), NPPM_DMMSHOW, 0, LPARAM(consoleforms.handle));
 
 end;
 
