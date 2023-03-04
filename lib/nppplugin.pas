@@ -441,9 +441,10 @@ type
     ModuleName:nppPChar; // name of module GetModuleFileName(0...)
   end;
 
+  TFuncArr = array of _TFuncItem;
   TNppPlugin = class(TObject)
   private
-    FuncArray: array of _TFuncItem;
+    FuncArray: TFuncArr;
   protected
     PluginName: nppString;
     function GetPluginsConfigDir: string;
@@ -474,6 +475,7 @@ type
     procedure GetFileLine(var filename: String; var Line: Integer);
     function KillTask(ExeFileName: string): Integer;
     function GetWord: string;
+    property AFuncArray : TFuncArr read FuncArray;
   end;
 
 

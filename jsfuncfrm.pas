@@ -1,0 +1,221 @@
+unit jsfuncfrm;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, StdCtrls, ExtCtrls, NppForms, stringworkerplugin, cefvcl, ceflib,
+  Menus;
+
+type
+  Tjsfuncdlg = class(TNppForm)
+    Panel1: TPanel;
+    edttarget: TEdit;
+    cbnew: TCheckBox;
+    cbthis: TCheckBox;
+    cbmemo: TCheckBox;
+    Panel2: TPanel;
+    runbtn: TButton;
+    edtfunc: TEdit;
+    Memo: TMemo;
+    Groupbox: TGroupBox;
+    MainMenu: TMainMenu;
+    procedure FormShow(Sender: TObject);
+    procedure runbtnClick(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+  private
+    devtools: TChromiumDevTools;
+    PluginDlg : THelloWorldPlugin;
+    chrom: TChromium;
+    FFuncPos: Pchar;             // edtfunc.text + #0
+    FNextToken : string;
+    funcname: string;            // function name
+    funcparams: Tstringlist;     // parameters
+    procedure OnRenderMsgReceived(Sender: TObject; const browser: ICefBrowser; sourceProcess: TCefProcessId;
+                                    const message: ICefProcessMessage; out Result: Boolean);
+  public
+    constructor create( Dlg: THelloWorldPlugin );
+  end;
+
+  TCustomRenderProcessHandler = class(TCefRenderProcessHandlerOwn)
+     protected
+       function OnProcessMessageReceived(const browser: ICefBrowser;sourceProcess: TCefProcessId; const message: ICefProcessMessage): Boolean; override;
+  end;
+  
+var
+  jsfuncdlg: Tjsfuncdlg;
+
+implementation
+
+{$R *.dfm}
+
+constructor Tjsfuncdlg.create(Dlg: THelloWorldPlugin);
+begin
+  inherited Create(Dlg);
+  PluginDlg := Dlg;
+end;
+
+procedure Tjsfuncdlg.FormShow(Sender: TObject);
+begin
+  edttarget.Text := 'file:///' + PluginDlg.getCurrentPathFileA;
+  chrom.Load(edttarget.Text);
+  //devtools.ShowDevTools(chrom.Browser);
+  
+end;
+
+procedure Tjsfuncdlg.runbtnClick(Sender: TObject);
+var
+  I: integer;
+  isRecived : Boolean;
+  msg : ICefProcessMessage;
+  jsfilename : string; 
+  procedure AddOne;
+  begin
+    FNextToken := FNextToken + FFuncPos^;
+    Inc(FFuncPos);
+  end;
+  
+begin
+  // target jsfile load
+  jsfilename := PluginDlg.getCurrentPathFileA;
+  if fileexists(jsfilename) then
+  begin
+    edttarget.Text := 'file:///' + jsfilename;
+    chrom.Load(edttarget.Text);
+    //devtools.ShowDevTools(chrom.Browser);
+  end else
+  begin
+    chrom.Browser.MainFrame.LoadString(THelloWorldPlugin(Npp).getAllTextA, 'about:blank');
+    chrom.Browser.MainFrame.ExecuteJavaScript(THelloWorldPlugin(Npp).getAllTextA, 'about:blank', 0);
+  end;
+  
+  // ab('10'); parsing
+  if edtfunc.Text = '' then exit;
+  FFuncPos := Pchar(edtfunc.Text + #0);
+  funcparams := Tstringlist.Create;
+  
+  repeat
+     case FFuncPos^ of
+       'A'..'Z', 'a'..'z', '0'..'9', '_', '@':
+         begin
+           AddOne;
+           while FFuncPos^ in ['A'..'Z', 'a'..'z', '0'..'9', '_', '@'] do AddOne;
+         end;
+       '(' :
+         begin
+           funcname := FNextToken;
+           FNextToken := '';
+           Inc(FFuncPos);
+         end;
+       '''', '"' :
+         begin
+           if FNextToken <> '' then
+           begin
+             funcparams.Add(FNextToken);
+             FNextToken := '';
+           end;
+           inc(FFuncPos);
+         end;
+       ',' :
+         begin
+           inc(FFuncPos);
+         end;
+     else
+       inc(FFuncPos);
+     end;
+  until (FFuncPos^ in [#0]);
+
+   {
+  showmessage(funcname);
+  for i:=0 to funcparams.Count -1 do
+  begin
+    showmessage(funcparams[i]);
+  end;
+    }
+
+  msg := TCefProcessMessageRef.New('MSG_RUN');
+  msg.ArgumentList.SetString(0, funcname);                   // function name
+  for i:=0 to funcparams.Count -1 do
+    msg.ArgumentList.SetString(i+1, funcparams.Strings[i]);  // args
+  
+  isRecived := chrom.browser.SendProcessMessage(PID_RENDERER,msg);
+
+end;
+
+
+{ TCustomRenderProcessHandler }
+
+function TCustomRenderProcessHandler.OnProcessMessageReceived(
+  const browser: ICefBrowser; sourceProcess: TCefProcessId;
+  const message: ICefProcessMessage): Boolean;
+var
+  gobj, jsfunc, arg,retval : ICefv8Value;
+  context: ICefv8Context;
+  args : TCefv8ValueArray;
+  msg: ICefProcessMessage;
+  isRecived: boolean;
+  i : integer;
+begin
+
+  if (message.Name = 'MSG_jsrun') or
+     (message.Name = 'MSG_RUN') then
+  begin
+    context := browser.MainFrame.GetV8Context;
+    context.Enter;
+    //context.Eval()
+
+    gobj := context.GetGlobal;
+    jsfunc := gobj.GetValueByKey(message.ArgumentList.GetString(0));  // function name
+    if jsfunc = nil then context.Exit;
+
+    setlength(args, message.ArgumentList.GetSize-1);
+    for i:=1 to message.ArgumentList.GetSize-1 do
+    begin
+      arg := TCefv8ValueRef.NewString(message.ArgumentList.GetString(i));
+      args[i-1] := arg;
+    end;
+    retval := jsfunc.ExecuteFunction(nil,args);
+
+
+    context.Exit;
+
+    // retval 의 형 확인이 필요함.
+    
+    {  browser send }
+    msg := TCefProcessMessageRef.New(message.Name);
+    msg.ArgumentList.SetString(0, retval.GetStringValue);
+    isRecived := browser.SendProcessMessage(PID_BROWSER, msg);
+
+  end;
+end;
+
+procedure Tjsfuncdlg.FormCreate(Sender: TObject);
+begin
+  devtools := TChromiumDevTools.Create(self);
+  devtools.Parent := self;
+  devtools.Hide;
+  
+  chrom:= TChromium.Create(nil);
+  chrom.Parent := self;
+  chrom.Align := alClient;
+  chrom.DefaultUrl := 'about:blank';
+  chrom.hide;
+  chrom.OnProcessMessageReceived := OnRenderMsgReceived;
+end;
+
+procedure Tjsfuncdlg.OnRenderMsgReceived(Sender: TObject;
+  const browser: ICefBrowser; sourceProcess: TCefProcessId;
+  const message: ICefProcessMessage; out Result: Boolean);
+begin
+  if (message.Name = 'MSG_RUN') then
+  begin
+    memo.Lines.Add('[CEF3-'+ message.Name +' | return=]:' + message.ArgumentList.GetString(0))
+  end;
+
+  Result := True;
+end;
+
+initialization
+  CefRenderProcessHandler := TCustomRenderProcessHandler.Create;
+  
+end.

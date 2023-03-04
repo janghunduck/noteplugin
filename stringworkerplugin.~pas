@@ -88,7 +88,7 @@ var
 
 implementation
 
-uses cefconsole, kefreeutil, consolefrm, jsfuncfrm;
+uses cefconsole, kefreeutil, consolefrm;
 { THelloWorldPlugin }
 
 
