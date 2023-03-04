@@ -55,6 +55,7 @@ type
     procedure funcname;
     procedure JsFunctionCall;
     procedure JsPlugins;
+    procedure Hook;
 
 
   end;
@@ -76,6 +77,7 @@ procedure _getCurrentPathFile; cdecl;
 procedure _testfuncname;cdecl;
 procedure _JsFunctionCall; cdecl;
 procedure _JsPlugins; cdecl;
+procedure _Hook; cdecl;
 
 procedure RegisterSchemes(const registrar: ICefSchemeRegistrar); stdcall;
 function CefWndProc(Wnd: HWND; message: UINT; wParam: Integer; lParam: Integer): Integer; stdcall;
@@ -88,7 +90,7 @@ var
 
 implementation
 
-uses cefconsole, kefreeutil, consolefrm, jsfuncfrm;
+uses cefconsole, kefreeutil, consolefrm, jsfuncfrm, hookfrm;
 { THelloWorldPlugin }
 
 
@@ -171,7 +173,8 @@ begin
   self.AddFuncItem('all test : Replace Hello World', _FuncHelloWorld);
   self.AddFuncItem('About', _FuncAbout);
   self.AddFuncItem('- ', nil);
-  
+  AddFuncItem('Hook Test', _Hook);
+
   { js 파일을 읽고 함수 이름을 파싱한다.
     for문으로 동적으로 메뉴를 구성한다.}
   self.AddFuncItem('js_as_testfuncname', _testfuncname);    // as.js 안의 textcount parameter는 구조화된 배열을 넘긴다. [1. 모든텍스트 , 파일명 등]
@@ -532,6 +535,18 @@ begin
   npp.JsPlugins;
 end;
 
+procedure THelloWorldPlugin.Hook;
+begin
+  if (not Assigned(HookDlg)) then
+      HookDlg := THookDlg.Create(self);
+  HookDlg.Show;
+end;
+
+procedure _Hook;
+begin
+  Npp.Hook;
+end;
+
 
 procedure THelloWorldPlugin.JsConsole;
 var
@@ -819,6 +834,7 @@ procedure _JsWinConsole;
 begin
   Npp.JsWinConsole;
 end;
+
 
 
 

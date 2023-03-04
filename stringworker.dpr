@@ -28,7 +28,7 @@ uses
   consolefrm in 'consolefrm.pas' {consoleforms},
   cefconsole in 'cefconsole.pas',
   jsfuncfrm in 'jsfuncfrm.pas' {jsfuncdlg},
-  jsplugfrm in 'jsplugfrm.pas' {jsplugdlg};
+  hookfrm in 'hookfrm.pas' {HookDlg};
 
 {$R *.res}
 

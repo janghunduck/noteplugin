@@ -5,24 +5,25 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, StdCtrls, ExtCtrls, NppForms, stringworkerplugin, cefvcl, ceflib,
-  Menus;
+  Menus, AppEvnts;
 
 type
   Tjsfuncdlg = class(TNppForm)
     Panel1: TPanel;
     edttarget: TEdit;
-    cbnew: TCheckBox;
-    cbthis: TCheckBox;
-    cbmemo: TCheckBox;
     Panel2: TPanel;
     runbtn: TButton;
     edtfunc: TEdit;
     Memo: TMemo;
-    Groupbox: TGroupBox;
     MainMenu: TMainMenu;
+    radio: TRadioGroup;
+    ApplicationEvents1: TApplicationEvents;
     procedure FormShow(Sender: TObject);
     procedure runbtnClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure ApplicationEvents1Message(var Msg: tagMSG;
+      var Handled: Boolean);
+    procedure edttargetClick(Sender: TObject);
   private
     devtools: TChromiumDevTools;
     PluginDlg : THelloWorldPlugin;
@@ -41,11 +42,14 @@ type
      protected
        function OnProcessMessageReceived(const browser: ICefBrowser;sourceProcess: TCefProcessId; const message: ICefProcessMessage): Boolean; override;
   end;
-  
+
 var
   jsfuncdlg: Tjsfuncdlg;
 
+
 implementation
+
+
 
 {$R *.dfm}
 
@@ -88,6 +92,7 @@ begin
     chrom.Browser.MainFrame.LoadString(THelloWorldPlugin(Npp).getAllTextA, 'about:blank');
     chrom.Browser.MainFrame.ExecuteJavaScript(THelloWorldPlugin(Npp).getAllTextA, 'about:blank', 0);
   end;
+  
   // ab('10'); parsing
   if edtfunc.Text = '' then exit;
   FFuncPos := Pchar(edtfunc.Text + #0);
@@ -131,7 +136,8 @@ begin
     showmessage(funcparams[i]);
   end;
     }
-
+    
+  // send renderer
   msg := TCefProcessMessageRef.New('MSG_RUN');
   msg.ArgumentList.SetString(0, funcname);                   // function name
   for i:=0 to funcparams.Count -1 do
@@ -180,7 +186,7 @@ begin
 
     // retval 의 형 확인이 필요함.
     
-    {  browser send }
+    //  send browser  
     msg := TCefProcessMessageRef.New(message.Name);
     msg.ArgumentList.SetString(0, retval.GetStringValue);
     isRecived := browser.SendProcessMessage(PID_BROWSER, msg);
@@ -208,11 +214,39 @@ procedure Tjsfuncdlg.OnRenderMsgReceived(Sender: TObject;
 begin
   if (message.Name = 'MSG_RUN') then
   begin
-    memo.Lines.Add('[CEF3-'+ message.Name +' | return=]:' + message.ArgumentList.GetString(0))
+
+    if radio.ItemIndex = 0 then
+      
+    else if radio.ItemIndex = 1 then
+
+    else if radio.ItemIndex = 2 then
+      memo.Lines.Add('[CEF3-'+ message.Name +' | return=]:' + message.ArgumentList.GetString(0))
+
   end;
 
   Result := True;
 end;
+
+
+procedure Tjsfuncdlg.ApplicationEvents1Message(var Msg: tagMSG; var Handled: Boolean);
+begin
+  //
+  showmessage(inttostr(application.Handle));
+
+
+end;
+
+procedure Tjsfuncdlg.edttargetClick(Sender: TObject);
+begin
+  edttarget.Text := 'file:///' +  self.PluginDlg.getCurrentPathFileA;
+end;
+
+function GetMessageHook(Code, wParam, lParam: Integer): Integer; stdcall;
+begin
+
+end;
+
+
 
 initialization
   CefRenderProcessHandler := TCustomRenderProcessHandler.Create;

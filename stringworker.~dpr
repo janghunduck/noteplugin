@@ -27,8 +27,8 @@ uses
   KeFreeUtil in 'KefreeUtil.pas',
   consolefrm in 'consolefrm.pas' {consoleforms},
   cefconsole in 'cefconsole.pas',
-  jsfuncfrm in 'jsfuncfrm.pas' {jsfuncforms},
-  jsplugfrm in 'jsplugfrm.pas' {jsplugforms};
+  jsfuncfrm in 'jsfuncfrm.pas' {jsfuncdlg},
+  hookfrm in 'hookfrm.pas' {Form1};
 
 {$R *.res}
 

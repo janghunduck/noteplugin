@@ -1,7 +1,7 @@
 object jsfuncdlg: Tjsfuncdlg
   Left = 1449
   Top = 774
-  Width = 471
+  Width = 470
   Height = 499
   BorderStyle = bsSizeToolWin
   Caption = 'javascript function call'
@@ -20,7 +20,7 @@ object jsfuncdlg: Tjsfuncdlg
   object Panel1: TPanel
     Left = 0
     Top = 0
-    Width = 463
+    Width = 462
     Height = 41
     Align = alTop
     Caption = 'Panel1'
@@ -28,54 +28,21 @@ object jsfuncdlg: Tjsfuncdlg
     object edttarget: TEdit
       Left = 7
       Top = 8
-      Width = 370
+      Width = 434
       Height = 21
       ImeName = 'Microsoft Office IME 2007'
       TabOrder = 0
       Text = 'file:///D:\flowjs\backend\flowjs.html'
-    end
-  end
-  object Groupbox: TGroupBox
-    Left = 0
-    Top = 41
-    Width = 463
-    Height = 40
-    Align = alTop
-    TabOrder = 1
-    object cbnew: TCheckBox
-      Left = 16
-      Top = 14
-      Width = 153
-      Height = 17
-      Caption = 'Return New Notepad++'
-      TabOrder = 0
-    end
-    object cbthis: TCheckBox
-      Left = 160
-      Top = 14
-      Width = 153
-      Height = 17
-      Caption = 'Return this Notepad++'
-      TabOrder = 1
-    end
-    object cbmemo: TCheckBox
-      Left = 304
-      Top = 14
-      Width = 97
-      Height = 17
-      Caption = 'Return memo'
-      Checked = True
-      State = cbChecked
-      TabOrder = 2
+      OnClick = edttargetClick
     end
   end
   object Panel2: TPanel
     Left = 0
     Top = 81
-    Width = 463
-    Height = 41
+    Width = 462
+    Height = 50
     Align = alTop
-    TabOrder = 2
+    TabOrder = 1
     object runbtn: TButton
       Left = 377
       Top = 8
@@ -102,15 +69,34 @@ object jsfuncdlg: Tjsfuncdlg
   end
   object Memo: TMemo
     Left = 0
-    Top = 122
-    Width = 463
-    Height = 350
+    Top = 131
+    Width = 462
+    Height = 341
     Align = alClient
     ImeName = 'Microsoft Office IME 2007'
+    TabOrder = 2
+  end
+  object radio: TRadioGroup
+    Left = 0
+    Top = 41
+    Width = 462
+    Height = 40
+    Align = alTop
+    Columns = 3
+    ItemIndex = 2
+    Items.Strings = (
+      'new notepad++'
+      'this notepad++'
+      'memo return')
     TabOrder = 3
   end
   object MainMenu: TMainMenu
     Left = 408
     Top = 184
+  end
+  object ApplicationEvents1: TApplicationEvents
+    OnMessage = ApplicationEvents1Message
+    Left = 24
+    Top = 168
   end
 end
