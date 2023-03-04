@@ -21,14 +21,14 @@ uses
   scisupport in 'lib\SciSupport.pas',
   NppForms in 'lib\NppForms.pas' {NppForm},
   NppDockingForms in 'lib\NppDockingForms.pas' {NppDockingForm},
-  stringworkerplugin in 'stringworkerplugin.pas',
-  AboutForms in 'AboutForms.pas' {AboutForm},
-  jsconsoleforms in 'jsconsoleforms.pas' {jsconsoledlg},
-  KeFreeUtil in 'KefreeUtil.pas',
-  consolefrm in 'consolefrm.pas' {consoleforms},
-  cefconsole in 'cefconsole.pas',
-  jsfuncfrm in 'jsfuncfrm.pas' {jsfuncdlg},
-  hookfrm in 'hookfrm.pas' {HookDlg};
+  stringworkerplugin in 'src\stringworkerplugin.pas',
+  AboutForms in 'src\AboutForms.pas' {AboutForm},
+  jsconsoleforms in 'src\jsconsoleforms.pas' {jsconsoledlg},
+  KeFreeUtil in 'src\KefreeUtil.pas',
+  consolefrm in 'src\consolefrm.pas' {consoleforms},
+  cefconsole in 'src\cefconsole.pas',
+  jsfuncfrm in 'src\jsfuncfrm.pas' {jsfuncdlg},
+  hookfrm in 'src\hookfrm.pas' {HookDlg};
 
 {$R *.res}
 
