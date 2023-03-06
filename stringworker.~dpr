@@ -37,7 +37,7 @@ uses
 
 begin
   { First, assign the procedure to the DLLProc variable }
-  // lib\nppplugin.pas
+  // 
   DllProc := @DLLEntryPoint;
   { Now invoke the procedure to reflect that the DLL is attaching to the process }
   DLLEntryPoint(DLL_PROCESS_ATTACH);

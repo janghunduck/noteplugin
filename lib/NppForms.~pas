@@ -73,6 +73,7 @@ end;
 
 destructor TNppForm.Destroy;
 begin
+  log.WriteLog('TNppForm.Destroy');
   if (self.HandleAllocated) then
   begin
     self.UnregisterForm();
@@ -84,6 +85,7 @@ procedure TNppForm.RegisterForm();
 var
   r: Integer;
 begin
+  log.WriteLog('TNppForm.RegisterForm()');
   r:=SendMessage(self.Npp.NppData.NppHandle, NPPM_MODELESSDIALOG, MODELESSDIALOGADD, self.Handle);
 {
   if (r = 0) then
@@ -98,6 +100,7 @@ procedure TNppForm.UnregisterForm();
 var
   r: Integer;
 begin
+  log.WriteLog('TNppForm.UnregisterForm()');
   if (not self.HandleAllocated) then exit;
   r:=SendMessage(self.Npp.NppData.NppHandle, NPPM_MODELESSDIALOG, MODELESSDIALOGREMOVE, self.Handle);
 {
