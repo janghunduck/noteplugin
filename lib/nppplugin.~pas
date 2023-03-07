@@ -28,6 +28,7 @@ uses
 const
   FuncItemNameLen=64;
   MaxFuncs = 11;
+  NPPM_GETCURRENTLINE =  (NOTEPADPLUS_USER + 100);
 
   { Most of this defs are outdated... But there is no consistant N++ doc... }
   NOTEPADPLUS_USER = (WM_USER + 1000);
@@ -509,7 +510,7 @@ end;
 destructor TNppPlugin.Destroy;
 var i: Integer;
 begin
-  
+  log.WriteLog('TNppPlugin.Destroy.....................................');
   for i:=0 to Length(self.FuncArray)-1 do
   begin
     if (self.FuncArray[i].ShortcutKey <> nil) then

@@ -12,7 +12,6 @@ object consoleforms: Tconsoleforms
   Font.Name = 'MS Sans Serif'
   Font.Style = []
   OldCreateOrder = False
-  OnClose = FormClose
   OnCreate = FormCreate
   OnShow = FormShow
   PixelsPerInch = 96
@@ -69,6 +68,15 @@ object consoleforms: Tconsoleforms
       Caption = 'Selected Run'
       TabOrder = 1
       OnClick = slectedrunbtnClick
+    end
+    object btnclose: TButton
+      Left = 538
+      Top = 12
+      Width = 75
+      Height = 25
+      Caption = 'Close'
+      TabOrder = 2
+      OnClick = btncloseClick
     end
   end
 end

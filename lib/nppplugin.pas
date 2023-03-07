@@ -29,8 +29,14 @@ const
   FuncItemNameLen=64;
   MaxFuncs = 11;
 
+
   { Most of this defs are outdated... But there is no consistant N++ doc... }
   NOTEPADPLUS_USER = (WM_USER + 1000);
+
+
+  NPPM_GETCURRENTLINE =  (NOTEPADPLUS_USER + 100);
+
+
   NPPM_GETCURRENTSCINTILLA = (NOTEPADPLUS_USER + 4);
   NPPM_GETCURRENTLANGTYPE = (NOTEPADPLUS_USER + 5);
   NPPM_SETCURRENTLANGTYPE = (NOTEPADPLUS_USER + 6);

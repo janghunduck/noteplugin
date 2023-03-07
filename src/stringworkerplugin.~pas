@@ -18,6 +18,7 @@ uses
   logger;
 
 type
+  position = integer;
   THelloWorldPlugin = class(TNppPlugin)
   public
 
@@ -31,12 +32,23 @@ type
     function getAllText(): string;
     function getAllTextA(): string;
     function getLineCount(): integer;
-    function getLineLength(linenumber: integer): integer;
+    function getCurLinePos(): integer;
+    function getColPos(): position;
+    function getCurrlineNumber(): integer;
+    function getCurrlineNumberA(): integer;
+    function getLineLength(): integer;
+    procedure gotoline(linenumber: integer);
     function getCurrentFile(): string;
     function getCurrentPathFile(): AnsiString;
     function getCurrentPathFileA(): PWChar;
     procedure getCurrentPathFilep(returnstr: pwidechar);
     function setToolbardata():string;
+    procedure getSelectAll;
+    function getmarker(): integer;
+    procedure markerdefine();
+    function markeradd(markernumber: integer): integer;
+
+
     constructor Create;
     destructor Destroy; override;
     procedure BeforeDestruction; override;
@@ -214,6 +226,7 @@ begin
   Npp.FuncHelloWorldDocking;
 end;
 
+//SCI_GETSELTEXT(<unused>, char *text) ¡æ position
 function THelloWorldPlugin.getSelectedText(): string;
 var
   hCurrScintilla: THandle;
@@ -242,18 +255,94 @@ begin
   hCurrScintilla := getCurScintilla();
   bufLength := sendScintilla(hCurrScintilla, SCI_GETTEXT);
   setlength(result, bufLength);
+  
+  //SCI_GETTEXT(position length, char *text) ¡æ position
   sendScintilla(hCurrScintilla, SCI_GETTEXT, 0, LPARAM(PChar(result)));
-  //if result = nil then result := '';
 end;
 
+//SCI_GETLINECOUNT ¡æ line
 function THelloWorldPlugin.getLineCount(): integer;
 begin
   Result := sendScintilla(SCI_GETLINECOUNT);
 end;
 
-function THelloWorldPlugin.getLineLength(linenumber: integer): integer;
+//SCI_GETCURRENTPOS ¡æ position
+function THelloWorldPlugin.getCurLinePos(): integer;
 begin
-  result := sendScintilla(SCI_LINELENGTH, WPARAM(PChar(linenumber)));
+  Result := sendScintilla(SCI_GETCURRENTPOS);     // Position of the cursor in the entire buffer
+
+end;
+
+//SCI_GETCOLUMN(position pos) ¡æ position
+function THelloWorldPlugin.getColPos(): position;
+begin
+  result := SendMessage(self.NppData.ScintillaMainHandle, SCI_GETCOLUMN, 0, 0);
+end;
+
+//SCI_LINEFROMPOSITION(position pos) ¡æ line
+function THelloWorldPlugin.getCurrlineNumber(): integer;
+var
+  position : integer;
+begin
+  position := getCurLinePos();
+  Result := SendMessage(self.NppData.ScintillaMainHandle, SCI_LINEFROMPOSITION, position, 0) + 1;  // real line
+end;
+
+//SCI_LINEFROMPOSITION(position pos) ¡æ line
+function THelloWorldPlugin.getCurrlineNumberA(): integer;
+var
+  position : integer;
+begin
+  position := getCurLinePos();
+  Result := SendMessage(self.NppData.ScintillaMainHandle, SCI_LINEFROMPOSITION, position, 0);     // for  SCI_LINELENGTH
+end;
+
+//SCI_LINELENGTH(line line) ¡æ position
+function THelloWorldPlugin.getLineLength(): integer;
+var
+  linenumber: integer;
+begin
+  linenumber := getCurrlineNumberA();
+  result := SendMessage(self.NppData.ScintillaMainHandle, SCI_LINELENGTH, linenumber, 0);
+end;
+
+//SCI_SELECTALL
+procedure THelloWorldPlugin.getSelectAll();
+begin
+  SendMessage(self.NppData.ScintillaMainHandle, SCI_SELECTALL, 0, 0);
+end;
+
+//SCI_GOTOLINE(line line)
+procedure THelloWorldPlugin.gotoline(linenumber: integer);
+begin
+  SendMessage(self.NppData.ScintillaMainHandle, SCI_GOTOLINE, WPARAM(PChar(linenumber)), 0);
+end;
+
+//SCI_MARKERGET(line line) ¡æ int
+function THelloWorldPlugin.getmarker(): integer;
+var
+  linenumber: integer;
+begin
+  linenumber := getCurrlineNumberA();
+  result :=  SendMessage(self.NppData.ScintillaMainHandle, SCI_MARKERGET, linenumber, 0);
+end;
+
+//SCI_MARKERDEFINE(int markerNumber, int markerSymbol)     // markernumber 0-31
+procedure THelloWorldPlugin.markerdefine();
+const
+  markernumber = 1;
+begin
+  SendMessage(self.NppData.ScintillaMainHandle, SCI_MARKERDEFINE, markernumber, lparam(Pchar('@')));
+  markeradd(markernumber);
+end;
+
+//SCI_MARKERADD(line line, int markerNumber) ¡æ int
+function THelloWorldPlugin.markeradd(markernumber: integer): integer;
+var
+  linenumber: integer;
+begin
+  linenumber := getCurrlineNumber();
+  result := SendMessage(self.NppData.ScintillaMainHandle, SCI_MARKERADD, linenumber, markernumber);
 end;
 
 procedure THelloWorldPlugin.FuncHelloWorld;
@@ -270,6 +359,7 @@ begin
   showmessage('filename = [' + getCurrentFile  + ']');
   showmessage('selected text = [' + getSelectedText() + ']');
   showmessage('line count= [' + inttostr(getLineCount()) + ']');
+  showmessage('line num= [' + inttostr(self.getCurrlineNumberA()) + ']');
 
   {
 	selStart := sendScintilla(hCurrScintilla, SCI_GETSELECTIONSTART);

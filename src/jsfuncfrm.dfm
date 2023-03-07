@@ -94,9 +94,4 @@ object jsfuncdlg: Tjsfuncdlg
     Left = 408
     Top = 184
   end
-  object ApplicationEvents1: TApplicationEvents
-    OnMessage = ApplicationEvents1Message
-    Left = 24
-    Top = 168
-  end
 end

@@ -4,8 +4,8 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, ExtCtrls, NppForms, stringworkerplugin, cefvcl, ceflib,
-  Menus, AppEvnts;
+  Dialogs, StdCtrls, ExtCtrls, NppPlugin, NppForms, stringworkerplugin, cefvcl, ceflib,
+  Menus;
 
 type
   Tjsfuncdlg = class(TNppForm)
@@ -17,12 +17,9 @@ type
     Memo: TMemo;
     MainMenu: TMainMenu;
     radio: TRadioGroup;
-    ApplicationEvents1: TApplicationEvents;
     procedure FormShow(Sender: TObject);
     procedure runbtnClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
-    procedure ApplicationEvents1Message(var Msg: tagMSG;
-      var Handled: Boolean);
     procedure edttargetClick(Sender: TObject);
   private
     devtools: TChromiumDevTools;
@@ -32,6 +29,7 @@ type
     FNextToken : string;
     funcname: string;            // function name
     funcparams: Tstringlist;     // parameters
+    procedure WndProc(var Msg: TMessage); override;
     procedure OnRenderMsgReceived(Sender: TObject; const browser: ICefBrowser; sourceProcess: TCefProcessId;
                                     const message: ICefProcessMessage; out Result: Boolean);
   public
@@ -43,7 +41,9 @@ type
        function OnProcessMessageReceived(const browser: ICefBrowser;sourceProcess: TCefProcessId; const message: ICefProcessMessage): Boolean; override;
   end;
 
+  function MouseHookProc(Code,wParam,lParam:Integer) : Integer; stdcall;
 var
+  Ahook : HHook;
   jsfuncdlg: Tjsfuncdlg;
 
 
@@ -162,8 +162,7 @@ var
   i : integer;
 begin
 
-  if (message.Name = 'MSG_jsrun') or
-     (message.Name = 'MSG_RUN') then
+  if (message.Name = 'MSG_RUN') then
   begin
     context := browser.MainFrame.GetV8Context;
     context.Enter;
@@ -207,6 +206,18 @@ begin
   chrom.hide;
 
   chrom.OnProcessMessageReceived := OnRenderMsgReceived;
+
+  { mouse hook }
+  AHook := SetWindowsHookEx(WH_MOUSE, MouseHookProc, hInstance, GetCurrentThreadID);
+end;
+
+function MouseHookProc(Code,wParam,lParam:Integer) : Integer; stdcall;
+begin
+  if Wparam = WM_LBUTTONUP then begin
+     jsfuncdlg.edttarget.text := npp.getCurrentPathFileA;   // sendmessage
+  end;
+
+  result := CallNextHookEx(AHook, Code, wParam, lParam);
 end;
 
 procedure Tjsfuncdlg.OnRenderMsgReceived(Sender: TObject;
@@ -229,20 +240,34 @@ begin
 end;
 
 
-procedure Tjsfuncdlg.ApplicationEvents1Message(var Msg: tagMSG; var Handled: Boolean);
-begin
-  //
-  showmessage(inttostr(application.Handle));
-
-
-end;
-
 procedure Tjsfuncdlg.edttargetClick(Sender: TObject);
 begin
   edttarget.Text := 'file:///' +  self.PluginDlg.getCurrentPathFileA;
 end;
 
 
+
+procedure Tjsfuncdlg.WndProc(var Msg: TMessage);
+begin
+
+  case Msg.Msg of
+    WM_DESTROY: begin
+      log.WriteLog('THookDlg.WndProc .... WM_DESTROY Hook end');
+      //FreeAndnil(chrom);
+      //FreeAndnil(devtools);
+      //CefShutDown;
+      UnHookWindowsHookEx(AHook);
+
+    end;
+
+    WM_CREATE: begin
+
+    end;
+  end;
+  
+  inherited WndProc(Msg);
+
+end;
 
 initialization
   CefRenderProcessHandler := TCustomRenderProcessHandler.Create;

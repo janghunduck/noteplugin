@@ -18,11 +18,12 @@ type
     Panel2: TPanel;
     runbtn: TButton;
     slectedrunbtn: TButton;
-    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    btnclose: TButton;
     procedure runbtnClick(Sender: TObject);
     procedure slectedrunbtnClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
+    procedure btncloseClick(Sender: TObject);
   private
     procedure WndProc(var Msg: TMessage); override;
   protected
@@ -30,6 +31,8 @@ type
   public
     chrom: TChromium;
     PluginDlg : THelloWorldPlugin;
+    pt: TPoint;
+
     currentfile: string;
     currentpathfile: string;
     NpHandle : THandle;
@@ -43,11 +46,123 @@ type
 
 var
   consoledlg: Tconsoleforms;
-  Ahook : HHook;
+  MouseHook : HHook;
 
 implementation
 
 {$R *.dfm}
+
+procedure Tconsoleforms.runbtnClick(Sender: TObject);
+var
+  filename : string;
+begin
+  filename := PluginDlg.getCurrentPathFileA;
+  if fileexists(filename) then
+  begin
+    targetedt.Text := 'file:///' + filename;
+    chrom.Load(targetedt.Text);
+    devtools.ShowDevTools(chrom.Browser);
+  end else
+    chrom.Browser.MainFrame.ExecuteJavaScript(THelloWorldPlugin(Npp).getAllTextA, 'about:blank', 0);
+
+end;
+
+procedure Tconsoleforms.slectedrunbtnClick(Sender: TObject);
+var
+  seltext : string;
+begin
+  seltext := THelloWorldPlugin(Npp).getSelectedText;
+  chrom.Browser.MainFrame.ExecuteJavaScript(seltext, 'about:blank', 0);
+end;
+
+
+constructor Tconsoleforms.create(Dlg: THelloWorldPlugin);
+begin
+  inherited Create(Dlg);
+  PluginDlg := Dlg;
+end;
+
+function MouseHookProc(Code,wParam,lParam:Integer) : Integer; stdcall;
+var
+  X, Y : Integer;
+  handle : THandle;
+  clsname : string;
+begin
+  X := PMouseHookStruct(lParam).pt.X;
+  Y := PMouseHookStruct(lParam).pt.Y;
+  consoledlg.pt := point(X,Y);
+  
+  if Wparam = WM_LBUTTONUP then begin
+
+     handle := WindowFromPoint(consoledlg.pt);
+     SetLength(clsname, 255);
+     GetClassName(handle, PChar(clsname), 255);
+     //consoledlg.Caption := consoledlg.Caption + ' [' + trim(clsname) + ']';
+     //consoledlg.Caption := consoledlg.Caption + ' [' + PChar(clsname) + ']';
+     
+     if (PChar(clsname) = 'SysTabControl32') then
+       consoledlg.targetedt.text := npp.getCurrentPathFileA   // sendmessage
+     else if (PChar(clsname) = 'Scintilla') then
+     begin
+       ScreenToClient(handle, consoledlg.pt);
+       consoledlg.Caption :=  inttostr(consoledlg.pt.x) + ', ' + inttostr(consoledlg.pt.y);
+       // linebar 영역 
+       // 책갈피 영역
+       if (consoledlg.pt.x > 28) and (consoledlg.pt.x < 45) then
+       begin
+         consoledlg.Caption := inttostr(npp.getCurrlineNumberA) + ' 책갈피 영역입니다.';
+       
+       end;
+     end;
+  end;
+
+  result := CallNextHookEx(MouseHook, Code, wParam, lParam);
+end;
+
+procedure Tconsoleforms.FormCreate(Sender: TObject);
+begin
+  chrom:= TChromium.Create(nil);
+  chrom.Parent := self;
+  chrom.Align := alClient;
+  chrom.DefaultUrl := 'about:blank';
+  chrom.hide;
+
+
+  { NodePad++ hook start }
+  MouseHook := SetWindowsHookEx(WH_MOUSE, MouseHookProc, hInstance, GetCurrentThreadID);
+end;
+
+
+procedure Tconsoleforms.FormShow(Sender: TObject);
+begin
+  targetedt.Text := 'file:///' + PluginDlg.getCurrentPathFileA;
+  chrom.Load(targetedt.Text);
+  devtools.ShowDevTools(chrom.Browser);
+end;
+
+
+procedure Tconsoleforms.WndProc(var Msg: TMessage);
+begin
+
+  case Msg.Msg of
+    WM_DESTROY: begin
+      log.WriteLog('THookDlg.WndProc .... WM_DESTROY Hook end');
+      //FreeAndnil(chrom);
+      //FreeAndnil(devtools);
+      //CefShutDown;
+      UnHookWindowsHookEx(MouseHook);
+
+    end;
+
+    WM_CREATE: begin
+      //log.WriteLog('THookDlg.WndProc .... WM_CREATE');
+      
+    end;
+  end;
+  
+  inherited WndProc(Msg);
+end;
+
 
 
 {
@@ -123,96 +238,12 @@ begin
 end;
 }
 
-procedure Tconsoleforms.FormClose(Sender: TObject; var Action: TCloseAction);
+
+procedure Tconsoleforms.btncloseClick(Sender: TObject);
 begin
-  log.WriteLog('Tconsoleforms.FormClose');
-  //FreeAndnil(chrom);
-  //FreeAndnil(devtools);
-  //CefShutDown;
-  //UnHookWindowsHookEx(AHook);
-  //inherited;
+  //
+  self.Close;
 
 end;
-
-
-procedure Tconsoleforms.runbtnClick(Sender: TObject);
-var
-  filename : string;
-begin
-  filename := PluginDlg.getCurrentPathFileA;
-  if fileexists(filename) then
-  begin
-    targetedt.Text := 'file:///' + filename;
-    chrom.Load(targetedt.Text);
-    devtools.ShowDevTools(chrom.Browser);
-  end else
-    chrom.Browser.MainFrame.ExecuteJavaScript(THelloWorldPlugin(Npp).getAllTextA, 'about:blank', 0);
-
-end;
-
-// 선택 영역 실행
-procedure Tconsoleforms.slectedrunbtnClick(Sender: TObject);
-var
-  seltext : string;
-begin
-  seltext := THelloWorldPlugin(Npp).getSelectedText;
-  chrom.Browser.MainFrame.ExecuteJavaScript(seltext, 'about:blank', 0);
-end;
-
-
-constructor Tconsoleforms.create(Dlg: THelloWorldPlugin);
-begin
-  inherited Create(Dlg);
-  PluginDlg := Dlg;
-end;
-
-procedure Tconsoleforms.FormCreate(Sender: TObject);
-begin
-  chrom:= TChromium.Create(nil);
-  chrom.Parent := self;
-  chrom.Align := alClient;
-  chrom.DefaultUrl := 'about:blank';
-  chrom.hide;
-
-  { NodePad++ hook start }
-  AHook := SetWindowsHookEx(WH_MOUSE, MouseHookProc, hInstance, GetCurrentThreadID);
-end;
-
-
-procedure Tconsoleforms.FormShow(Sender: TObject);
-begin
-  targetedt.Text := 'file:///' + PluginDlg.getCurrentPathFileA;
-  chrom.Load(targetedt.Text);
-  devtools.ShowDevTools(chrom.Browser);
-end;
-
-
-procedure Tconsoleforms.WndProc(var Msg: TMessage);
-begin
-
-  case Msg.Msg of
-    WM_DESTROY: begin
-      log.WriteLog('THookDlg.WndProc .... WM_DESTROY Hook end');
-      UnHookWindowsHookEx(AHook);
-    end;
-
-    WM_CREATE: begin
-      //log.WriteLog('THookDlg.WndProc .... WM_CREATE');
-      
-    end;
-  end;
-  
-  inherited WndProc(Msg);
-end;
-
-function MouseHookProc(Code,wParam,lParam:Integer) : Integer; stdcall;
-begin
-  if Wparam = WM_LBUTTONUP then begin
-     consoledlg.targetedt.text := npp.getCurrentPathFileA;   // sendmessage
-  end;
-
-  result := CallNextHookEx(AHook, Code, wParam, lParam);
-end;
-
 
 end.
