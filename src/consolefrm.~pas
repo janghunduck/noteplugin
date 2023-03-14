@@ -93,7 +93,9 @@ begin
   consoledlg.pt := point(X,Y);
   
   if Wparam = WM_LBUTTONUP then begin
+     consoledlg.targetedt.text := npp.getCurrentPathFileA;   // sendmessage
 
+     {
      handle := WindowFromPoint(consoledlg.pt);
      SetLength(clsname, 255);
      GetClassName(handle, PChar(clsname), 255);
@@ -101,7 +103,7 @@ begin
      //consoledlg.Caption := consoledlg.Caption + ' [' + PChar(clsname) + ']';
      
      if (PChar(clsname) = 'SysTabControl32') then
-       consoledlg.targetedt.text := npp.getCurrentPathFileA   // sendmessage
+       //consoledlg.targetedt.text := npp.getCurrentPathFileA   // sendmessage
      else if (PChar(clsname) = 'Scintilla') then
      begin
        ScreenToClient(handle, consoledlg.pt);
@@ -114,6 +116,7 @@ begin
        
        end;
      end;
+     }
   end;
 
   result := CallNextHookEx(MouseHook, Code, wParam, lParam);
@@ -126,7 +129,6 @@ begin
   chrom.Align := alClient;
   chrom.DefaultUrl := 'about:blank';
   chrom.hide;
-
 
   { NodePad++ hook start }
   MouseHook := SetWindowsHookEx(WH_MOUSE, MouseHookProc, hInstance, GetCurrentThreadID);

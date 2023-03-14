@@ -26,4 +26,15 @@ inherited AboutForm: TAboutForm
     ModalResult = 1
     TabOrder = 0
   end
+  object Edit1: TEdit
+    Left = 24
+    Top = 104
+    Width = 297
+    Height = 21
+    BevelInner = bvNone
+    BevelOuter = bvNone
+    ImeName = 'Microsoft Office IME 2007'
+    TabOrder = 1
+    Text = 'https://github.com/janghunduck/noteplugin'
+  end
 end

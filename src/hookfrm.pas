@@ -33,6 +33,7 @@ type
     Button14: TButton;
     Button15: TButton;
     Edit1: TEdit;
+    Chromium1: TChromium;
     procedure Button1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure Button2Click(Sender: TObject);

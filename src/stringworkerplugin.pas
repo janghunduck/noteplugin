@@ -11,7 +11,7 @@ uses
   Dialogs,
   Windows,
   messages,
-  NppPlugin, SciSupport, AboutForms, jsconsoleforms,
+  NppPlugin, SciSupport, menuCmdID, AboutForms, jsconsoleforms,
 
   ceflib,
   ceffilescheme,
@@ -66,6 +66,7 @@ type
 
     procedure JsConsoleDock;
     procedure JsConsole;
+    procedure JsConsoleMessage;
     procedure JsWinConsole;
     procedure funcname;
     procedure JsFunctionCall;
@@ -87,6 +88,7 @@ procedure _FuncTest; cdecl;
 
 procedure _JsConsoleDock; cdecl;
 procedure _JsConsole; cdecl;
+procedure _JsConsoleMessage;cdecl;
 procedure _JsWinConsole; cdecl;
 procedure _getCurrentPathFile; cdecl;
 procedure _testfuncname;cdecl;
@@ -103,7 +105,7 @@ var
 
 implementation
 
-uses cefconsole, kefreeutil, consolefrm, jsfuncfrm, hookfrm;
+uses cefconsole, kefreeutil, consolefrm, jsfuncfrm, hookfrm, jsconsolemsgfrm;
 { THelloWorldPlugin }
 
 
@@ -172,6 +174,7 @@ begin
   self.AddFuncItem('-', _FuncHelloWorld);
    }
   self.AddFuncItem('Chrom Developer Tools', _JsConsole);
+  //self.AddFuncItem('Console Message Tools', _JsConsoleMessage);
   self.AddFuncItem('Javascript Function call', _JsFunctionCall);
   //self.AddFuncItem('Javascript Plugins', _JsPlugins);
   //self.AddFuncItem('js winapi »ý¼º', _JsWinConsole);
@@ -634,6 +637,18 @@ begin
   Npp.Hook;
 end;
 
+
+procedure THelloWorldPlugin.JsConsoleMessage;
+begin
+  if (not Assigned(consolemsgdlg)) then
+      consolemsgdlg := Tconsolemsgdlg.Create(self);
+  consolemsgdlg.Show;
+end;
+
+procedure _JsConsoleMessage;cdecl;
+begin
+  npp.JsConsoleMessage;
+end;
 
 procedure THelloWorldPlugin.JsConsole;
 var
