@@ -40,7 +40,7 @@ object HookDlg: THookDlg
   object Memo1: TMemo
     Left = 0
     Top = 0
-    Width = 758
+    Width = 750
     Height = 113
     Align = alTop
     ImeName = 'Microsoft Office IME 2007'

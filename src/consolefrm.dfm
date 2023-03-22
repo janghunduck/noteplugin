@@ -1,8 +1,8 @@
 object consoleforms: Tconsoleforms
-  Left = 1314
-  Top = 631
+  Left = 671
+  Top = 307
   Width = 630
-  Height = 509
+  Height = 483
   BorderStyle = bsSizeToolWin
   Caption = 'chrom for javascript '
   Color = clBtnFace
@@ -19,14 +19,14 @@ object consoleforms: Tconsoleforms
   object devtools: TChromiumDevTools
     Left = 0
     Top = 41
-    Width = 622
-    Height = 397
+    Width = 614
+    Height = 359
     Align = alClient
   end
   object Panel1: TPanel
     Left = 0
     Top = 0
-    Width = 622
+    Width = 614
     Height = 41
     Align = alTop
     Caption = 'Panel1'
@@ -43,8 +43,8 @@ object consoleforms: Tconsoleforms
   end
   object Panel2: TPanel
     Left = 0
-    Top = 438
-    Width = 622
+    Top = 400
+    Width = 614
     Height = 44
     Align = alBottom
     BevelOuter = bvNone

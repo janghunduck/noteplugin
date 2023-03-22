@@ -1,7 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <BorlandProject>
 	<Transactions>
-    <Transaction>2023-03-13 02:27:47.711,D:\git\noteplugin\_x64\stringworker_x64.dproj=C:\Users\hanso\Documents\Embarcadero\Studio\Projects\Project1.dproj</Transaction>
-    <Transaction>2023-03-13 03:20:56.222,D:\git\noteplugin\_x64\stringworker.dproj=D:\git\noteplugin\_x64\stringworker_x64.dproj</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.809,=D:\git\noteplugin_x64\Unit1.pas</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.365,D:\git\noteplugin_x64\src\aboutforms.pas=D:\git\noteplugin_x64\Unit1.pas</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.986,=D:\git\noteplugin_x64\src\logger.pas</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.757,=D:\git\noteplugin_x64\Unit1.pas</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.978,D:\git\noteplugin_x64\Unit1.pas=D:\git\noteplugin_x64\src\stringworkerplugin.pas</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.717,=D:\git\noteplugin_x64\Unit1.pas</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.887,D:\git\noteplugin_x64\Project1.dproj=C:\Users\hanso\Documents\Embarcadero\Studio\Projects\Project1.dproj</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.365,D:\git\noteplugin_x64\src\aboutforms.dfm=D:\git\noteplugin_x64\Unit1.dfm</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.931,D:\git\noteplugin_x64\Unit2.dfm=D:\git\noteplugin_x64\src\jsconsoleforms.dfm</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.028,=D:\git\noteplugin_x64\Unit2.pas</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.931,D:\git\noteplugin_x64\Unit2.pas=D:\git\noteplugin_x64\src\jsconsoleforms.pas</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.146,D:\git\noteplugin_x64\stringworker.dproj=D:\git\noteplugin_x64\Project1.dproj</Transaction>
   </Transactions>
 </BorlandProject>

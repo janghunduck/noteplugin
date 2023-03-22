@@ -191,4 +191,12 @@ object HookDlg: THookDlg
     ImeName = 'Microsoft Office IME 2007'
     TabOrder = 17
   end
+  object Chromium1: TChromium
+    Left = 88
+    Top = 464
+    Width = 100
+    Height = 41
+    DefaultUrl = 'about:blank'
+    TabOrder = 18
+  end
 end

@@ -195,7 +195,7 @@ begin
     for문으로 동적으로 메뉴를 구성한다.}
   self.AddFuncItem('js_as_testfuncname', _testfuncname);    // as.js 안의 textcount parameter는 구조화된 배열을 넘긴다. [1. 모든텍스트 , 파일명 등]
 
-
+  CefLibrary := 'D:\software\npp.8.5.portable\plugins\stringworker\libcef.dll';
 end;
 
 procedure _testfuncname;cdecl;
@@ -885,7 +885,7 @@ begin
 
   if not CefLoadLibDefault then Exit;
 
-  showmessage(inttostr(GetCefLibHandle));
+  //showmessage(inttostr(GetCefLibHandle));
 
   CefRegisterSchemeHandlerFactory('local', '', TFileScheme);
 try

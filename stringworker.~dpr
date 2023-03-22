@@ -30,7 +30,8 @@ uses
   jsfuncfrm in 'src\jsfuncfrm.pas' {jsfuncdlg},
   hookfrm in 'src\hookfrm.pas' {HookDlg},
   logger in 'src\logger.pas',
-  jsconsolemsgfrm in 'src\jsconsolemsgfrm.pas' {consolemsgdlg};
+  jsconsolemsgfrm in 'src\jsconsolemsgfrm.pas' {consolemsgdlg},
+  menuCmdID in 'src\menuCmdID.pas';
 
 {$R *.res}
 

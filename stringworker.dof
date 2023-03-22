@@ -90,11 +90,11 @@ MaxStackSize=1048576
 ImageBase=4194304
 ExeDescription=
 [Directories]
-OutputDir=C:\Program Files\Notepad++\plugins\stringworker
-UnitOutputDir=D:\noteplugin\tmp
+OutputDir=D:\git\noteplugin\bin
+UnitOutputDir=D:\git\noteplugin\tmp
 PackageDLLOutputDir=
 PackageDCPOutputDir=
-SearchPath=$(DELPHI)\Lib\Debug;C:\PROGRA~1\Jedi\jcl\lib\d6\debug;D:\flowjs\dcef3-master\src
+SearchPath=$(DELPHI)\Lib\Debug;D:\_project\dcef\dcef3-master\src;D:\_project\dcef\dcef3-master\demos\filescheme
 Packages=vcl;rtl;dbrtl;adortl;vcldb;vclx;bdertl;vcldbx;ibxpress;dsnap;cds;bdecds;qrpt;teeui;teedb;tee;dss;teeqr;visualclx;visualdbclx;dsnapcrba;dsnapcon;VclSmp;vclshlctrls;vclie;xmlrtl;inet;inetdbbde;inetdbxpress;inetdb;nmfast;webdsnap;websnap;soaprtl;dbexpress;dbxcds;indy;dclOffice2k;dOCI6;CoolTrayIcon_D6plus;curlpkg;ThemeManagerD6;VirtualTreesD6;Jcl;JclVcl;JvCoreD6R;JvSystemD6R;JvStdCtrlsD6R;JvAppFrmD6R;JvBandsD6R;JvDBD6R;JvDlgsD6R;JvBDED6R;JvCmpD6R;JvCryptD6R;JvCtrlsD6R;JvCustomD6R;JvDockingD6R;JvDotNetCtrlsD6R;JvEDID6R;JvGlobusD6R;JvHMID6R;JvInterpreterD6R;JvJansD6R;JvManagedThreadsD6R;JvMMD6R;JvNetD6R;JvPageCompsD6R;JvPluginD6R;JvPrintPreviewD6R;JvRuntimeDesignD6R;JvTimeFrameworkD6R;JvUIBD6R;JvValidatorsD6R;JvWizardD6R;JvXPCtrlsD6R
 Conditionals=NPPUNICODE
 DebugSourceDirs=
@@ -141,18 +141,24 @@ Item0=NPPUNICODE
 Count=1
 Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;
 [HistoryLists\hlSearchPath]
-Count=5
-Item0=$(DELPHI)\Lib\Debug;C:\PROGRA~1\Jedi\jcl\lib\d6\debug;D:\flowjs\dcef3-master\src
-Item1=$(DELPHI)\Lib\Debug;C:\PROGRA~1\Jedi\jcl\lib\d6\debug
-Item2=D:\flowjs\_note++ plugin\jsstring\lib;$(DELPHI)\Lib\Debug
-Item3=D:\flowjs\_note++ plugin\jsstring\lib
-Item4=D:\flowjs\_note++ plugin\DelphiPluginTemplate2\lib
+Count=7
+Item0=$(DELPHI)\Lib\Debug;D:\_project\dcef\dcef3-master\src;D:\_project\dcef\dcef3-master\demos\filescheme
+Item1=$(DELPHI)\Lib\Debug;D:\_project\dcef\dcef3-master\src
+Item2=$(DELPHI)\Lib\Debug;C:\PROGRA~1\Jedi\jcl\lib\d6\debug;D:\flowjs\dcef3-master\src
+Item3=$(DELPHI)\Lib\Debug;C:\PROGRA~1\Jedi\jcl\lib\d6\debug
+Item4=D:\flowjs\_note++ plugin\jsstring\lib;$(DELPHI)\Lib\Debug
+Item5=D:\flowjs\_note++ plugin\jsstring\lib
+Item6=D:\flowjs\_note++ plugin\DelphiPluginTemplate2\lib
 [HistoryLists\hlUnitOutputDirectory]
-Count=1
-Item0=D:\noteplugin\tmp
+Count=3
+Item0=D:\git\noteplugin\tmp
+Item1=D:\git\win32test\tmp
+Item2=D:\noteplugin\tmp
 [HistoryLists\hlOutputDirectorry]
-Count=4
-Item0=C:\Program Files\Notepad++\plugins\stringworker
-Item1=C:\Program Files\Notepad++\plugins\helloworld
-Item2=C:\Program Files\Notepad++\plugins\jsstring
-Item3=C:\Program Files\Notepad++\plugins
+Count=6
+Item0=D:\git\noteplugin\bin
+Item1=D:\git\win32test\bin
+Item2=C:\Program Files\Notepad++\plugins\stringworker
+Item3=C:\Program Files\Notepad++\plugins\helloworld
+Item4=C:\Program Files\Notepad++\plugins\jsstring
+Item5=C:\Program Files\Notepad++\plugins

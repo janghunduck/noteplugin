@@ -1,0 +1,50 @@
+
+1. 현재 디렉토리의 소스 (noteplugin) :  
+                       window7, 
+                       delphi7, 
+                       notepad++ 8.5 win32
+
+                       => windows 10 에서 delphi7로 개발하는것과 같다.
+                       => stringworkerplugin.pas 에  dcef3 win32 경로로  CefLibrary := 'D:\software\npp.8.5.portable\plugins\stringworker\libcef.dll'; 를 추가한다.
+                       => npp.8.5.portable 에서 testing 
+                       => ok
+
+2. 현재 디렉토리 아래 _x86 : 
+                       window10,  
+                       embarcadero® Delphi 10.4 (Platform win32) , 
+                       notepad++ 8.5 win32,
+                       dcef3 win32
+                       
+                       => 1. 에서와 같이 같은 소스를 대상으로 한고, x86 디렉토리에 copy 한다.
+                       => 1. 같이 dcef3 는 win32 용을 사용한다.
+                       => embarcadero® Delphi 10.4 (Platform win32) 에서 소스를 열고 컴파일을 수행한다.
+                       
+                       => fail   - PChar
+                            MultiByteToWideChar : PAnsiChar -> PWideChar
+                            WideCharToMultiByte
+                            FindWindow(nil, PWideChar(WinTitle)); // PAnsiChar 를 못씀.
+                            SetWindowsHookEx(WH_MOUSE, @MouseHookProc, hInstance, GetCurrentThreadID);  // callback function 앞에 @(포인터 연산자) 를 붙임 
+                       => npp.8.5.portable 에서 testing.
+                       => ok     
+
+현재 디렉토리 아래 _x64 : 
+                       window10,  
+                       Embarcadero® Delphi 10.4, 
+                       notepad++ v8.5, win64  (C:\Program Files\Notepad++)
+                       dcef3 win64  
+                       
+                       => 2. 에서 같은 소스를 대상으로 한고, x86 디렉토리에 copy 한다.
+                       => stringworkerplugins.pas CefLibrary := 'D:\_project\dcef\dcef3-master\bin\Win64\libcef.dll'; 정의
+                       => Target Platforms 추가 Window 64 bit
+                       => compile
+                       => fail   - 
+ 
+                       SendMessageTimeout(hWindowHandle, WM_CLOSE, 0, 0, SMTO_ABORTIFHUNG or SMTO_NORMAL, 5000, DWResult);
+                       win64에서는 의미가 없나? DWResult 는 성공 (0>), 실패(0) 이 들어온다.
+                       SendMessageTimeout(hWindowHandle, WM_CLOSE, 0, 0, SMTO_ABORTIFHUNG or SMTO_NORMAL, 5000, nil);
+
+
+
+테스트 ( D:\software ) :
+npp.8.5.portable.x64.zip win64 binary 
+npp.8.5.portable.zip win32 binary 

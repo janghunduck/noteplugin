@@ -1,0 +1,332 @@
+unit stringworkerplugin;
+
+interface
+
+uses
+  System.SysUtils,
+  System.Classes,
+  //constrols
+  //extctrls
+  vcl.Forms,
+  vcl.Dialogs,
+  Winapi.Windows,
+  Winapi.Messages,
+  {
+  System.StrUtils,
+  System.DateUtils,
+  System.IOUtils,
+  System.Math,
+  System.Types,
+  System.Generics.Defaults,
+  System.Generics.Collections,
+  }
+  SciSupport, NppSupport, NppPlugin, NppPluginForms, NppPluginDockingForms,
+  ceflib,
+  logger,
+  TlHelp32;
+
+type
+  TStringWorker = class(TNppPlugin)
+    private
+      procedure FuncAbout;
+      function KillTask(ExeFileName: string): Integer;
+    public
+      procedure JsConsole;
+      function getCurrentPathFileA(): PWChar;
+      function getAllTextA_old(): string;
+      function getAllTextAA(): utf8string;
+      function getAllTextUtf8: string;
+      function getSelectedText(): string;
+      function getSelectedTextutf8(): string;
+      function getSelectedTextx(): PWideChar;
+      procedure test();
+
+      procedure DoNppnBeforeShutDown; override;
+      procedure DoNppnCancelShutDown; override;
+      procedure DoNppnShutdown; override;
+
+      procedure   BeforeDestruction; override;
+
+      procedure   MessageProc(var Msg: TMessage); override;
+      constructor Create; override;
+      destructor  Destroy; override;
+
+  end;
+
+  procedure _JsConsole; cdecl; forward;
+  procedure _FuncAbout; cdecl; forward;
+
+
+var
+  Npp: TStringWorker;
+  log : TLogger;
+
+implementation
+
+uses aboutforms, jsconsoleforms;
+
+{ TStringWorker }
+
+procedure TStringWorker.BeforeDestruction;
+begin
+
+  log.WriteLog('TStringWorker.BeforeDestruction.....................................');
+
+
+  inherited;
+
+  //KillTask('notepad++.exe');
+
+end;
+
+constructor TStringWorker.Create;
+begin
+  inherited create;
+
+  log := getlogger('yyyy-mm-dd_hh"$keditor.log"',
+                    ExtractFilePath(Application.ExeName)+'plugins\stringworker\log\',
+                    3,
+                    10,
+                    NIL{lbLog.Items},
+                    5,
+                    300);
+
+  self.PluginName := 'String &Worker';
+  self.AddFuncItem('Chrom Developer Tools', _JsConsole);
+  self.AddFuncItem('About', _FuncAbout);
+
+  {$IFDEF WIN32}
+     CefLibrary := 'D:\software\npp.8.5.portable\plugins\stringworker\libcef.dll';
+  {$ELSE}
+     CefLibrary := 'D:\software\npp.8.5.portable.x64\plugins\stringworker\libcef.dll';
+  {$ENDIF}
+
+end;
+
+destructor TStringWorker.Destroy;
+begin
+  inherited;
+end;
+
+procedure TStringWorker.DoNppnBeforeShutDown;
+begin
+  log.WriteLog('DoNppnBeforeShutDown');
+  inherited;
+end;
+
+procedure TStringWorker.DoNppnCancelShutDown;
+begin
+  log.WriteLog('DoNppnCancelShutDown');
+  inherited;
+end;
+
+procedure TStringWorker.DoNppnShutdown;
+begin
+  log.WriteLog('DoNppnShutdown');
+
+  inherited;
+  //CefShutDown;   // cef.dll shutdown
+  self.KillTask('notepad++.exe');
+end;
+
+procedure TStringWorker.FuncAbout;
+var
+  aboutdlg: TAboutForm;
+begin
+  aboutdlg := TAboutForm.Create(self);
+  aboutdlg.ShowModal;
+  aboutdlg.Free;
+end;
+
+
+//SCI_GETTEXT(position length, char *text NUL-terminated) → position
+function TStringWorker.getAllTextA_old: string;
+var
+  //length: integer;
+  length: nativeint;
+  //buf: UnicodeString;        // 64bit string = unicodestring 8byte
+                             // 32bit string 4byte
+                             // pchar 4byte => 8byte
+  buf : array of ansichar;   // widechar 로 하면 깨침, ansichar 는 0..#255
+  i: integer;
+  //tmp: string;
+begin
+
+  //buf := '';
+  result := '';
+  length := SendMessage(Npp.NppData.ScintillaMainHandle, SCI_GETTEXTLENGTH, WPARAM(0), LPARAM(0));
+  //showmessage(inttostr(length));
+  SetLength(buf, length);
+  //FillChar(buf[1], length, 32);
+  //SendMessage(Npp.NppData.ScintillaMainHandle, SCI_GETTEXT, WPARAM(length), LPARAM(PChar(@buf[1])));
+  SendMessageW(Npp.NppData.ScintillaMainHandle, SCI_GETTEXT, WPARAM(length), LPARAM(PAnsiChar(buf)));
+  //showmessage(UTF8Encode(buf));
+  //Memo1.Text:=Utf8ToAnsi(buf);
+
+  for I := 0 to length do
+  begin
+     result := result + PWideChar(buf[i]);
+  end;
+
+  //showmessage(result);
+  //result := PChar(buf[3]);
+end;
+
+
+{ utf8 처리
+  // 현재 문서가 utf8 인지 ansi 인지 체크할 필요가 있음.
+}
+function TStringWorker.getAllTextutf8: string;
+var
+  len: nativeint;
+  utf8str: utf8string;
+begin
+  len := SendMessage(Npp.NppData.ScintillaMainHandle, SCI_GETTEXTLENGTH, WPARAM(0), LPARAM(0));
+  SetLength(utf8str, len);
+  SendMessageW(Npp.NppData.ScintillaMainHandle, SCI_GETTEXT, WPARAM(len), LPARAM(utf8str));
+  result := string(utf8str);
+end;
+
+function TStringWorker.getAllTextAA: utf8string;
+var
+  len: nativeint;
+begin
+  result := '';
+  len := SendMessage(Npp.NppData.ScintillaMainHandle, SCI_GETTEXTLENGTH, WPARAM(0), LPARAM(0));
+  SetLength(result, len);
+  SendMessageW(Npp.NppData.ScintillaMainHandle, SCI_GETTEXT, WPARAM(len), LPARAM(result));
+end;
+
+// laparam 에 Pwidechar 를 쓰면 받아오길 하나 글자가 깨어짐
+// pchar, pansichar는 0..#255 로 영문사용을 하는 자료형이다.
+// 문서 encoding 이 ANSI 인 경우 한글 OK
+// utf-8 인경우 장 => ??
+// pchar = pwidechar ( 유니코드 지원)
+// pchar = pansichar ( 이전 델파이 유니코드 비지원)
+function TStringWorker.getSelectedText: string;
+var
+  length: nativeint;
+  buf : unicodestring;
+begin
+  buf := '';
+  length := SendMessage(Npp.NppData.ScintillaMainHandle, SCI_GETSELTEXT, 0, 0);
+  if length = 0 then
+  begin
+    result := '';
+    exit;
+  end;
+  setlength(buf, length);
+  SendMessage(Npp.NppData.ScintillaMainHandle, SCI_GETSELTEXT, length, LPARAM(PansiChar(buf)));
+  result := unicodestring(PansiChar(buf));
+end;
+
+
+function TStringWorker.getSelectedTextutf8: string;
+var
+  len : nativeint;
+  utf8str: utf8string;
+begin
+  len := SendMessage(Npp.NppData.ScintillaMainHandle, SCI_GETSELTEXT, 0, 0);
+  setlength(utf8str, len);
+  SendMessage(Npp.NppData.ScintillaMainHandle, SCI_GETSELTEXT, WPARAM(len), LPARAM(utf8str));
+  result := string(utf8str);
+end;
+
+function TStringWorker.getSelectedTextx: PWideChar;
+var
+  length: Integer;
+  buf : String;
+begin
+  buf := '';
+  length := SendMessage(Npp.NppData.ScintillaMainHandle, SCI_GETSELTEXT, 0, 0);
+  if length = 0 then
+  begin
+    result := '';
+    exit;
+  end;
+  setlength(buf, length);
+  SendMessage(Npp.NppData.ScintillaMainHandle, SCI_GETSELTEXT, WPARAM(length), LPARAM(PWideChar(buf)));
+  result := PWideChar(buf);
+end;
+
+
+function TStringWorker.getCurrentPathFileA: PWideChar;
+var
+  s: String;
+  r: Integer;
+begin
+  s := '';
+  SetLength(s, 300);
+  SendMessage(self.NppData.NppHandle, NPPM_GETFULLCURRENTPATH, WPARAM(0), LPARAM(PWideChar(s)));
+  result := PWideChar(s);
+end;
+
+
+procedure TStringWorker.JsConsole;
+begin
+  if (not Assigned(consoleforms)) then
+      consoleforms := Tconsoleforms.Create(self);
+  consoleforms.Show;
+end;
+
+function TStringWorker.KillTask(ExeFileName: string): Integer;
+const
+  PROCESS_TERMINATE = $0001;
+var
+  ContinueLoop: BOOL;
+  FSnapshotHandle: THandle;
+  FProcessEntry32: TProcessEntry32;
+begin
+  Result := 0;
+  FSnapshotHandle := CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+  FProcessEntry32.dwSize := SizeOf(FProcessEntry32);
+  ContinueLoop := Process32First(FSnapshotHandle, FProcessEntry32);
+  while Integer(ContinueLoop) <> 0 do  begin
+    if (
+         (UpperCase(ExtractFileName(FProcessEntry32.szExeFile)) = UpperCase(ExeFileName)) or
+         (UpperCase(FProcessEntry32.szExeFile) = UpperCase(ExeFileName))
+        ) then
+      Result :=
+        Integer(
+          TerminateProcess(
+            OpenProcess(
+              PROCESS_TERMINATE,
+              BOOL(0),
+              FProcessEntry32.th32ProcessID
+            ),
+            0
+          )
+        );
+     ContinueLoop := Process32Next(FSnapshotHandle, FProcessEntry32);
+  end;
+  CloseHandle(FSnapshotHandle);
+end;
+
+procedure TStringWorker.MessageProc(var Msg: TMessage);
+begin
+  inherited;
+  //log.WriteLog('TStringWorker.MessageProc');
+end;
+
+procedure TStringWorker.test;
+begin
+  //SendMessage(Npp.NppData.NppHandle, WM_DOOPEN, 0, LPARAM(PChar(s)));
+
+  //SendMessage(Npp.NppData.ScintillaMainHandle, SCI_CLEARALL,0,0);
+  //SendMessage(Npp.NppData.ScintillaMainHandle, SCI_APPENDTEXT,50,integer(PwideChar('[장 \n ab]')));
+  showmessage(string(self.getAllTextAA));
+end;
+
+
+
+procedure _JsConsole;
+begin
+  Npp.JsConsole;
+end;
+
+procedure _FuncAbout; cdecl;
+begin
+  Npp.FuncAbout;
+end;
+
+end.

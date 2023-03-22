@@ -124,7 +124,7 @@ begin
   ThreadId := GetWindowThreadProcessId(hWindow, @ProcessId);
   showmessage(inttostr(ThreadId) + ' | ' + inttostr(GetCurrentThreadID));
 
-  hook := SetWindowsHookEx(WH_MOUSE,myHookProc,hInstance,GetCurrentThreadID);
+  hook := SetWindowsHookEx(WH_MOUSE, @myHookProc,hInstance,GetCurrentThreadID);
 end;
 
 function myHookProc(code : Integer; wParam, lParam : LongInt) : LongInt; stdcall;
