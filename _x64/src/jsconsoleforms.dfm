@@ -2,7 +2,7 @@ object consoleforms: Tconsoleforms
   Left = 0
   Top = 0
   Caption = 'chrom for javascript '
-  ClientHeight = 380
+  ClientHeight = 419
   ClientWidth = 528
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -19,57 +19,74 @@ object consoleforms: Tconsoleforms
     Left = 0
     Top = 0
     Width = 528
-    Height = 49
+    Height = 33
     Align = alTop
     TabOrder = 0
     object targetedt: TEdit
-      Left = 17
-      Top = 14
-      Width = 473
+      Left = 9
+      Top = 6
+      Width = 506
       Height = 21
       TabOrder = 0
       Text = 'file:///D:\flowjs\backend\flowjs.html'
     end
   end
-  object Panel2: TPanel
+  object PanelRun: TPanel
     Left = 0
-    Top = 343
+    Top = 382
     Width = 528
     Height = 37
     Align = alBottom
     TabOrder = 1
-    object runbtn: TButton
-      Left = 16
+    object btnrun: TButton
+      Left = 6
       Top = 6
       Width = 75
       Height = 25
       Caption = 'run'
       TabOrder = 0
-      OnClick = runbtnClick
+      OnClick = btnrunClick
     end
-    object selectedrunbtn: TButton
-      Left = 97
-      Top = 4
+    object btnselectedrun: TButton
+      Left = 87
+      Top = 6
       Width = 75
       Height = 25
-      Caption = 'selecte run'
+      Caption = 'selected run'
       TabOrder = 1
-      OnClick = selectedrunbtnClick
+      OnClick = btnselectedrunClick
     end
     object btnclose: TButton
       Left = 440
-      Top = 4
+      Top = 6
       Width = 75
       Height = 25
       Caption = 'close'
       TabOrder = 2
+      OnClick = btncloseClick
+    end
+    object btnfunccall: TButton
+      Left = 327
+      Top = 6
+      Width = 75
+      Height = 25
+      Caption = 'function call'
+      TabOrder = 3
+      OnClick = btnfunccallClick
+    end
+    object edtfunc: TEdit
+      Left = 177
+      Top = 8
+      Width = 144
+      Height = 21
+      TabOrder = 4
     end
   end
   object DevTools: TChromiumDevTools
     Left = 0
-    Top = 49
+    Top = 33
     Width = 528
-    Height = 294
+    Height = 349
     Align = alClient
   end
 end

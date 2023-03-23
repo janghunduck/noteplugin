@@ -16,30 +16,45 @@ uses
   Vcl.ExtCtrls,
   NppPlugin,
   NppPluginForms,
-  cefvcl;
+  cefvcl,
+  ceflib;
+
+const
+  CEFMSG_FUNCTION_CALL = 'CEFMSG_FUNCTION_CALL';
 
 type
   Tconsoleforms = class(TNppPluginForm)
     Panel1: TPanel;
     targetedt: TEdit;
-    Panel2: TPanel;
-    runbtn: TButton;
-    selectedrunbtn: TButton;
+    PanelRun: TPanel;
+    btnrun: TButton;
+    btnselectedrun: TButton;
     btnclose: TButton;
     DevTools: TChromiumDevTools;
+    btnfunccall: TButton;
+    edtfunc: TEdit;
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
-    procedure runbtnClick(Sender: TObject);
-    procedure selectedrunbtnClick(Sender: TObject);
+    procedure btnrunClick(Sender: TObject);
+    procedure btnselectedrunClick(Sender: TObject);
     procedure Button1Click(Sender: TObject);
+    procedure btnfunccallClick(Sender: TObject);
+    procedure btncloseClick(Sender: TObject);
   private
 
     chrom: TChromium;
     pt: TPoint;
     procedure WndProc(var Msg: TMessage); override;
     procedure ChromLoad();
+    procedure OnRenderMsgReceived(Sender: TObject; const browser: ICefBrowser; sourceProcess: TCefProcessId;
+                                    const message: ICefProcessMessage; out Result: Boolean);
   public
     { Public declarations }
+  end;
+
+  TCustomRenderProcessHandler = class(TCefRenderProcessHandlerOwn)
+     protected
+       function OnProcessMessageReceived(const browser: ICefBrowser;sourceProcess: TCefProcessId; const message: ICefProcessMessage): Boolean; override;
   end;
 
   function MouseHookProc(Code,wParam,lParam:Integer) : Integer; stdcall;
@@ -118,6 +133,8 @@ begin
   chrom.DefaultUrl := 'about:blank';
   chrom.hide;
 
+  chrom.OnProcessMessageReceived := OnRenderMsgReceived;
+
   { NodePad++ hook start }
   MouseHook := SetWindowsHookEx(WH_MOUSE, @MouseHookProc, hInstance, GetCurrentThreadID);
 end;
@@ -127,7 +144,89 @@ begin
   ChromLoad;
 end;
 
-procedure Tconsoleforms.runbtnClick(Sender: TObject);
+procedure Tconsoleforms.OnRenderMsgReceived(Sender: TObject;
+  const browser: ICefBrowser; sourceProcess: TCefProcessId;
+  const message: ICefProcessMessage; out Result: Boolean);
+begin
+  if (message.Name = CEFMSG_FUNCTION_CALL) then
+  begin
+    chrom.Browser.MainFrame.ExecuteJavaScript('console.log(' + message.ArgumentList.GetString(0) + ')', 'about:blank', 0);
+  end;
+
+  Result := True;
+end;
+
+procedure Tconsoleforms.btncloseClick(Sender: TObject);
+begin
+  close;
+end;
+
+procedure Tconsoleforms.btnfunccallClick(Sender: TObject);
+var
+  funcPos: PAnsiChar;
+  funcparams  : TStringlist;
+  funcname : string;
+  token: string;
+  cefmsg: ICefProcessMessage;
+  i : integer;
+  isRecived: boolean;
+
+  procedure AddOne;
+  begin
+    token := token + funcPos^;
+    Inc(funcPos);
+  end;
+begin
+
+  // ab('10'); parsing
+  if edtfunc.Text = '' then exit;
+
+  funcPos := Pansichar(edtfunc.Text + #0);
+  funcparams  := TStringlist.Create;
+
+  repeat
+    case funcPos^ of
+       'A'..'Z', 'a'..'z', '0'..'9', '_', '@':
+         begin
+           AddOne;
+           while funcPos^ in ['A'..'Z', 'a'..'z', '0'..'9', '_', '@'] do AddOne;
+         end;
+       '(' :
+         begin
+           funcname := token;
+           token := '';
+           Inc(funcPos);
+         end;
+       '''', '"' :
+         begin
+           if token <> '' then
+           begin
+             funcparams.Add(token);
+             token := '';
+           end;
+           inc(funcPos);
+         end;
+       ',' :
+         begin
+           inc(funcPos);
+         end;
+     else
+       inc(funcPos);
+     end;
+  until (funcPos^ in [#0]) or (funcPos^ in ['{']);
+
+  // send renderer
+  cefmsg := TCefProcessMessageRef.New(CEFMSG_FUNCTION_CALL);
+  cefmsg.ArgumentList.SetString(0, funcname);                   // function name
+
+  for i:=0 to funcparams.Count -1 do
+    cefmsg.ArgumentList.SetString(i+1, funcparams.Strings[i]);  // args
+
+  isRecived := chrom.browser.SendProcessMessage(PID_RENDERER,cefmsg);
+
+end;
+
+procedure Tconsoleforms.btnrunClick(Sender: TObject);
 var
   filename : string;
 begin
@@ -144,7 +243,7 @@ begin
 
 end;
 
-procedure Tconsoleforms.selectedrunbtnClick(Sender: TObject);
+procedure Tconsoleforms.btnselectedrunClick(Sender: TObject);
 var
   seltext : string;
 begin
@@ -173,5 +272,54 @@ begin
 
   inherited WndProc(Msg);
 end;
+
+{ TCustomRenderProcessHandler }
+
+function TCustomRenderProcessHandler.OnProcessMessageReceived(
+  const browser: ICefBrowser; sourceProcess: TCefProcessId;
+  const message: ICefProcessMessage): Boolean;
+var
+  gobj, jsfunc, arg, retval : ICefv8Value;
+  context: ICefv8Context;
+  args : TCefv8ValueArray;
+  msg: ICefProcessMessage;
+  isRecived: boolean;
+  i : integer;
+begin
+
+  if (message.Name = CEFMSG_FUNCTION_CALL) then
+  begin
+    context := browser.MainFrame.GetV8Context;
+    context.Enter;
+    //context.Eval()
+
+    gobj := context.GetGlobal;
+    jsfunc := gobj.GetValueByKey(message.ArgumentList.GetString(0));  // function name
+    if jsfunc = nil then context.Exit;
+
+    setlength(args, message.ArgumentList.GetSize-1);
+    for i:=1 to message.ArgumentList.GetSize-1 do
+    begin
+      arg := TCefv8ValueRef.NewString(message.ArgumentList.GetString(i));
+      args[i-1] := arg;
+    end;
+    retval := jsfunc.ExecuteFunction(nil,args);
+
+
+    context.Exit;
+
+    // retval 의 형 확인이 필요함.
+
+    //  send browser
+    msg := TCefProcessMessageRef.New(message.Name);
+    msg.ArgumentList.SetString(0, retval.GetStringValue);
+    isRecived := browser.SendProcessMessage(PID_BROWSER, msg);
+
+  end;
+end;
+
+initialization
+  CefRenderProcessHandler := TCustomRenderProcessHandler.Create;
+
 
 end.
