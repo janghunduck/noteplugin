@@ -164,7 +164,7 @@ begin
     resultstr := 'console.log("' +
                  message.ArgumentList.GetString(0) +
                  '");';
-    chrom.Browser.MainFrame.ExecuteJavaScript(resultstr, 'notepad++', 0);
+    chrom.Browser.MainFrame.ExecuteJavaScript(resultstr, '', 0);
   end;
 
   Result := True;
@@ -283,7 +283,7 @@ begin
     devtools.ShowDevTools(chrom.Browser);
   end else begin// not saved doc ex, new 1 new 2 .....
     //showmessage(Npp.getAllTextA);
-    chrom.Browser.MainFrame.ExecuteJavaScript(Npp.getAllTextutf8, 'notepad++', 0);
+    chrom.Browser.MainFrame.ExecuteJavaScript(Npp.getAllTextutf8, 'about:blank', 0);
   end;
 
 end;

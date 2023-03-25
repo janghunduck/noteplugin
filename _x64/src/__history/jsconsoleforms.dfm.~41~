@@ -102,7 +102,6 @@ object consoleforms: Tconsoleforms
       Caption = '>'
       PopupMenu = PopupFuncMenu
       TabOrder = 5
-      OnClick = BitBtnfunclistClick
     end
   end
   object DevTools: TChromiumDevTools
@@ -111,6 +110,7 @@ object consoleforms: Tconsoleforms
     Width = 528
     Height = 349
     Align = alClient
+    ExplicitTop = 35
   end
   object PopupFuncMenu: TPopupMenu
     Left = 344

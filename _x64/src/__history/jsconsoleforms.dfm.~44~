@@ -111,6 +111,7 @@ object consoleforms: Tconsoleforms
     Width = 528
     Height = 349
     Align = alClient
+    ExplicitTop = 34
   end
   object PopupFuncMenu: TPopupMenu
     Left = 344

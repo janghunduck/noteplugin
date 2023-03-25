@@ -26,8 +26,7 @@ uses
   stringworkerplugin in 'src\stringworkerplugin.pas',
   aboutforms in 'src\aboutforms.pas' {AboutForm},
   jsconsoleforms in 'src\jsconsoleforms.pas' {consoleforms},
-  logger in 'src\logger.pas',
-  jsfunction in 'src\jsfunction.pas';
+  logger in 'src\logger.pas';
 
 {$R *.res}
 

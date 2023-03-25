@@ -37,6 +37,7 @@ type
     edtfunc: TEdit;
     PopupFuncMenu: TPopupMenu;
     BitBtnfunclist: TBitBtn;
+    Memo1: TMemo;
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure btnrunClick(Sender: TObject);
@@ -164,7 +165,7 @@ begin
     resultstr := 'console.log("' +
                  message.ArgumentList.GetString(0) +
                  '");';
-    chrom.Browser.MainFrame.ExecuteJavaScript(resultstr, 'notepad++', 0);
+    chrom.Browser.MainFrame.ExecuteJavaScript(resultstr, '', 0);
   end;
 
   Result := True;
@@ -216,9 +217,6 @@ var
   end;
 begin
   // 처음 에디터에 클릭하고 바로 실행하면 안됨, 해당문서가 한번은 로드 되어야 함.
-  // 문서를 수정후 다시 호출하면 실시간으로 변경사항이 적용되지 않으니 저장후 문서 전체를 다시 로딩해야 한다.
-  // 아니면 함수 부분의 선택한 후 선택된 함수를 parsing 해서 처리한다.
-  //chrom.Load(targetedt.Text);
   // ab('10'); parsing
   if edtfunc.Text = '' then exit;
 
@@ -283,7 +281,7 @@ begin
     devtools.ShowDevTools(chrom.Browser);
   end else begin// not saved doc ex, new 1 new 2 .....
     //showmessage(Npp.getAllTextA);
-    chrom.Browser.MainFrame.ExecuteJavaScript(Npp.getAllTextutf8, 'notepad++', 0);
+    chrom.Browser.MainFrame.ExecuteJavaScript(Npp.getAllTextutf8, 'about:blank', 0);
   end;
 
 end;
@@ -294,7 +292,7 @@ var
 begin
   seltext := Npp.getSelectedText;
   //showmessage(seltext);
-  chrom.Browser.MainFrame.ExecuteJavaScript(seltext, 'notepad++', 0);
+  chrom.Browser.MainFrame.ExecuteJavaScript(seltext, 'about:blank', 0);
 end;
 
 procedure Tconsoleforms.WndProc(var Msg: TMessage);

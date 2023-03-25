@@ -112,6 +112,15 @@ object consoleforms: Tconsoleforms
     Height = 349
     Align = alClient
   end
+  object Memo1: TMemo
+    Left = 288
+    Top = 96
+    Width = 209
+    Height = 137
+    Lines.Strings = (
+      'Memo1')
+    TabOrder = 3
+  end
   object PopupFuncMenu: TPopupMenu
     Left = 344
     Top = 272

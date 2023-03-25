@@ -44,7 +44,6 @@ object consoleforms: Tconsoleforms
       Width = 75
       Height = 25
       Caption = 'run'
-      PopupMenu = PopupFuncMenu
       TabOrder = 0
       OnClick = btnrunClick
     end
@@ -54,7 +53,6 @@ object consoleforms: Tconsoleforms
       Width = 75
       Height = 25
       Caption = 'selected run'
-      PopupMenu = PopupFuncMenu
       TabOrder = 1
       OnClick = btnselectedrunClick
     end
@@ -64,7 +62,6 @@ object consoleforms: Tconsoleforms
       Width = 67
       Height = 25
       Caption = 'close'
-      PopupMenu = PopupFuncMenu
       TabOrder = 2
       OnClick = btncloseClick
     end
@@ -75,13 +72,12 @@ object consoleforms: Tconsoleforms
       Height = 25
       Hint = 'It'#39's call function. ex) myfunc('#39'10'#39')'
       Caption = 'function call'
-      PopupMenu = PopupFuncMenu
       TabOrder = 3
       OnClick = btnfunccallClick
     end
     object edtfunc: TEdit
       Left = 177
-      Top = 7
+      Top = 6
       Width = 144
       Height = 23
       Hint = 'It'#39's call function. ex) myfunc('#39'10'#39')'
@@ -91,18 +87,15 @@ object consoleforms: Tconsoleforms
       Font.Name = 'Arial Black'
       Font.Style = []
       ParentFont = False
-      PopupMenu = PopupFuncMenu
       TabOrder = 4
     end
-    object BitBtnfunclist: TBitBtn
+    object BitBtn1: TBitBtn
       Left = 401
       Top = 6
-      Width = 30
+      Width = 26
       Height = 25
       Caption = '>'
-      PopupMenu = PopupFuncMenu
       TabOrder = 5
-      OnClick = BitBtnfunclistClick
     end
   end
   object DevTools: TChromiumDevTools
@@ -111,9 +104,6 @@ object consoleforms: Tconsoleforms
     Width = 528
     Height = 349
     Align = alClient
-  end
-  object PopupFuncMenu: TPopupMenu
-    Left = 344
-    Top = 272
+    ExplicitTop = 35
   end
 end

@@ -164,7 +164,7 @@ begin
     resultstr := 'console.log("' +
                  message.ArgumentList.GetString(0) +
                  '");';
-    chrom.Browser.MainFrame.ExecuteJavaScript(resultstr, 'notepad++', 0);
+    chrom.Browser.MainFrame.ExecuteJavaScript(resultstr, '', 0);
   end;
 
   Result := True;
