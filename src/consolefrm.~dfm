@@ -103,7 +103,7 @@ object consoleforms: Tconsoleforms
       OnClick = slectedrunbtnClick
     end
     object btnclose: TButton
-      Left = 562
+      Left = 538
       Top = 12
       Width = 75
       Height = 25

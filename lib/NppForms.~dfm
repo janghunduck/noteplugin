@@ -1,8 +1,8 @@
 object NppForm: TNppForm
-  Left = 1505
-  Top = 342
-  Width = 657
-  Height = 741
+  Left = 647
+  Top = 454
+  Width = 351
+  Height = 294
   BorderStyle = bsSizeToolWin
   Caption = 'NppForm'
   Color = clBtnFace

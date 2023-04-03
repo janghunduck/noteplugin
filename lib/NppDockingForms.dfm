@@ -1,6 +1,6 @@
 object NppDockingForm: TNppDockingForm
-  Left = 244
-  Top = 211
+  Left = 1384
+  Top = 918
   Width = 320
   Height = 240
   Color = clBtnFace

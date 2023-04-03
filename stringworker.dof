@@ -90,7 +90,7 @@ MaxStackSize=1048576
 ImageBase=4194304
 ExeDescription=
 [Directories]
-OutputDir=D:\git\noteplugin\bin
+OutputDir=D:\software\npp.8.5.portable\plugins\stringworker
 UnitOutputDir=D:\git\noteplugin\tmp
 PackageDLLOutputDir=
 PackageDCPOutputDir=
@@ -155,10 +155,11 @@ Item0=D:\git\noteplugin\tmp
 Item1=D:\git\win32test\tmp
 Item2=D:\noteplugin\tmp
 [HistoryLists\hlOutputDirectorry]
-Count=6
-Item0=D:\git\noteplugin\bin
-Item1=D:\git\win32test\bin
-Item2=C:\Program Files\Notepad++\plugins\stringworker
-Item3=C:\Program Files\Notepad++\plugins\helloworld
-Item4=C:\Program Files\Notepad++\plugins\jsstring
-Item5=C:\Program Files\Notepad++\plugins
+Count=7
+Item0=D:\software\npp.8.5.portable\plugins\stringworker
+Item1=D:\git\noteplugin\bin
+Item2=D:\git\win32test\bin
+Item3=C:\Program Files\Notepad++\plugins\stringworker
+Item4=C:\Program Files\Notepad++\plugins\helloworld
+Item5=C:\Program Files\Notepad++\plugins\jsstring
+Item6=C:\Program Files\Notepad++\plugins

@@ -256,12 +256,13 @@ begin
      end;
   until (funcPos^ in [#0]);
 
+  {
   showmessage('function na: ' + funcname);
   for i:=0 to funcparams.Count -1 do
   begin
     showmessage('parsms: ' + funcparams[i]);
   end;
-
+  }
   // send renderer
   cefmsg := TCefProcessMessageRef.New(CEFMSG_FUNCTION_CALL);
   cefmsg.ArgumentList.SetString(0, funcname);                   // function name
